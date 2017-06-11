@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_home" />
+        <item
+            android:id="@+id/nav_contribution"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_contributions" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_settings" />
+
+        <item
+            android:id="@+id/nav_instruction"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_instructions" />
+
+        <item
+            android:id="@+id/nav_privacy_policy"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_privacypolicy" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@mipmap/ic_launcher"
+            android:title="@string/nav_about" />
+    </group>
+
+    <!--<item android:title="Other">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_about_us"-->
+                <!--android:title="@string/nav_about_us" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_privacy_policy"-->
+                <!--android:title="@string/privacy_policy" />-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>
