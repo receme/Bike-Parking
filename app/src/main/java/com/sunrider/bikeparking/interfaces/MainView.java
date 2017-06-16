@@ -2,5 +2,8 @@ package com.sunrider.bikeparking.interfaces;
 
 
 public interface MainView {
-    void loadHomeFragment();
+    void init();
+    void setupNavigationDrawer();
+    void defineClickListener();
+    void loadFragment();
 }

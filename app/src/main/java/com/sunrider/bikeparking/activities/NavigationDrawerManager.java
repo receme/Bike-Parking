@@ -3,9 +3,11 @@ package com.sunrider.bikeparking.activities;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.interfaces.MainView;
@@ -28,12 +30,16 @@ public class NavigationDrawerManager {
     public static final String TAG_ABOUT = "about";
     public static String CURRENT_TAG = TAG_HOME;
 
+    private String[] activityTitles;
+
     public NavigationDrawerManager(MainView mainView, NavigationView navigationView, DrawerLayout drawer, View navHeader, ImageView imgNavHeaderBg) {
         this.mainView = mainView;
         this.navigationView = navigationView;
         this.drawer = drawer;
         this.navHeader = navHeader;
         this.imgNavHeaderBg = imgNavHeaderBg;
+
+        activityTitles = ((MainActivity)mainView).getResources().getStringArray(R.array.nav_item_activity_titles);
     }
 
     public void setActionView(int itemPosition, int layoutId) {
@@ -108,7 +114,7 @@ public class NavigationDrawerManager {
                 menuItem.setChecked(true);
 
                 if(mainView!=null){
-                    mainView.loadHomeFragment();
+                    mainView.loadFragment();
                 }
 
                 return true;
@@ -131,5 +137,11 @@ public class NavigationDrawerManager {
 
     public String getCurrentTag() {
         return CURRENT_TAG;
+    }
+
+    public void setToolbarTitle(ActionBar supportActionBar) {
+
+        Toast.makeText(((MainActivity)mainView),activityTitles[NavigationDrawerManager.navItemIndex],Toast.LENGTH_SHORT).show();
+        supportActionBar.setTitle(activityTitles[NavigationDrawerManager.navItemIndex]);
     }
 }

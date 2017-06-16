@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,19 +41,7 @@ public class MainActivity extends BaseActivity implements MainView{
 
     private View navHeader;
     private ImageView imgNavHeaderBg;
-//    private Toolbar toolbar;
-//
-//    public static int navItemIndex = 0;
-//
-//    private static final String TAG_HOME = "home";
-//    private static final String TAG_CONTRIBUTIONS = "contributions";
-//    private static final String TAG_SETTINGS = "settings";
-//    private static final String TAG_INSTRUCTIONS = "instructions";
-//    private static final String TAG_PRIVACY_POLICY = "privacy_policy";
-//    private static final String TAG_ABOUT = "about";
-//    public static String CURRENT_TAG = TAG_HOME;
 
-    private String[] activityTitles;
 
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
@@ -66,42 +53,16 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
         presenter = new MainPresenter(this);
-
-        mHandler = new Handler();
-
-        // Navigation view header
-        navHeader = navigationView.getHeaderView(0);
-        imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-
-        navigationDrawerManager = new NavigationDrawerManager(this,navigationView,drawer,navHeader,imgNavHeaderBg);
-
-
-        // load toolbar titles from string resources
-        activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-            }
-        });
-
-        // load nav menu header data
-        loadNavHeader();
-
-        // initializing navigation menu
-        setUpNavigationView();
+        presenter.init();
 
         if (savedInstanceState == null) {
             navigationDrawerManager.setNavItemIndex(0);
             navigationDrawerManager.setCurrentTag(NavigationDrawerManager.TAG_HOME);
-            loadHomeFragment();
+            loadFragment();
         }
     }
 
@@ -115,11 +76,24 @@ public class MainActivity extends BaseActivity implements MainView{
         return getString(R.string.app_name);
     }
 
-    /***
-     * Load navigation menu header information
-     * like background image, profile image
-     * name, website, notifications action view (dot)
-     */
+    @Override
+    public void init() {
+        mHandler = new Handler();
+
+        navHeader = navigationView.getHeaderView(0);
+        imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
+
+        navigationDrawerManager = new NavigationDrawerManager(this,navigationView,drawer,navHeader,imgNavHeaderBg);
+
+    }
+
+    @Override
+    public void setupNavigationDrawer() {
+
+        loadNavHeader();
+        setUpNavigationView();
+    }
+
     private void loadNavHeader() {
 
         Glide.with(this).asDrawable()
@@ -129,37 +103,57 @@ public class MainActivity extends BaseActivity implements MainView{
         navigationDrawerManager.setActionView(3, R.layout.menu_dot);
     }
 
-    /***
-     * Returns respected fragment that user
-     * selected from navigation menu
-     */
+    private void setUpNavigationView() {
+
+        navigationDrawerManager.setUpNavigationView();
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        drawer.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+    }
+
     @Override
-    public void loadHomeFragment() {
-        // selecting appropriate nav menu item
+    public void defineClickListener() {
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+            }
+        });
+    }
+
+    @Override
+    public void loadFragment() {
+
         navigationDrawerManager.selectNavMenu(NavigationDrawerManager.navItemIndex);
+        navigationDrawerManager.setToolbarTitle(getSupportActionBar());
 
-        // set toolbar title
-        setToolbarTitle();
-
-        // if user select the current navigation menu again, don't do anything
-        // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.CURRENT_TAG) != null) {
-
             navigationDrawerManager.closeDrawer();
-            // show or hide the fab button
             toggleFab();
             return;
         }
 
-        // Sometimes, when fragment has huge data, screen seems hanging
-        // when switching between navigation menus
-        // So using runnable, the fragment is loaded with cross fade effect
-        // This effect can be seen in GMail app
         Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = getHomeFragment();
+                Fragment fragment = getFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -179,24 +173,20 @@ public class MainActivity extends BaseActivity implements MainView{
         //Closing drawer on item click
         navigationDrawerManager.closeDrawer();
 
-        // refresh toolbar menu
         invalidateOptionsMenu();
     }
 
-    private Fragment getHomeFragment() {
+    private Fragment getFragment() {
 
         switch (NavigationDrawerManager.navItemIndex) {
             case 0:
-                // home
                 HomeFragment homeFragment = new HomeFragment();
                 return homeFragment;
             case 1:
-                // photos
                 ContributionFragment contributionFragment = new ContributionFragment();
                 return contributionFragment;
 
             case 2:
-                // movies fragment
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
             case 3:
@@ -214,33 +204,7 @@ public class MainActivity extends BaseActivity implements MainView{
         }
     }
 
-    private void setToolbarTitle() {
-        getSupportActionBar().setTitle(activityTitles[NavigationDrawerManager.navItemIndex]);
-    }
 
-    private void setUpNavigationView() {
-        navigationDrawerManager.setUpNavigationView();
-
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-                super.onDrawerOpened(drawerView);
-            }
-        };
-
-        //Setting the actionbarToggle to drawer layout
-        drawer.setDrawerListener(actionBarDrawerToggle);
-        //calling sync state is necessary or else your hamburger icon wont show up
-        actionBarDrawerToggle.syncState();
-    }
 
     @Override
     public void onBackPressed() {
@@ -250,15 +214,12 @@ public class MainActivity extends BaseActivity implements MainView{
             return;
         }
 
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
         if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
+
             if (NavigationDrawerManager.navItemIndex != 0) {
                 navigationDrawerManager.setNavItemIndex(0);
                 navigationDrawerManager.setCurrentTag(NavigationDrawerManager.TAG_HOME);
-                loadHomeFragment();
+                loadFragment();
                 return;
             }
         }
@@ -269,7 +230,6 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        // show menu only when home fragment is selected
         if (NavigationDrawerManager.navItemIndex == 0) {
             getMenuInflater().inflate(R.menu.main, menu);
         }
@@ -290,7 +250,6 @@ public class MainActivity extends BaseActivity implements MainView{
         return super.onOptionsItemSelected(item);
     }
 
-    // show or hide the fab
     private void toggleFab() {
         if (NavigationDrawerManager.navItemIndex == 0)
             fab.show();

@@ -3,6 +3,7 @@ package com.sunrider.bikeparking.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,9 +22,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
         ButterKnife.bind(this);
-
-        toolbar.setTitle(getActivityTitle());
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setTitle(getActivityTitle());
+
+
     }
 
     public abstract int getLayoutResourceId();

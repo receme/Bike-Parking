@@ -10,4 +10,9 @@ public class MainPresenter {
     public MainPresenter(MainView view){
         this.view = view;
     }
+
+    public void init(){
+        view.init();
+        view.setupNavigationDrawer();
+    }
 }
