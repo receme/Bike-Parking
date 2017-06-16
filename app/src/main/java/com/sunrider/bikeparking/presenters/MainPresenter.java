@@ -14,5 +14,6 @@ public class MainPresenter {
     public void init(){
         view.init();
         view.setupNavigationDrawer();
+        view.defineClickListener();
     }
 }

@@ -23,8 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutResourceId());
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle(getActivityTitle());
-
 
     }
 

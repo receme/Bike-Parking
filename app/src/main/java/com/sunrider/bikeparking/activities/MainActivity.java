@@ -30,7 +30,7 @@ import com.sunrider.bikeparking.presenters.MainPresenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView{
+public class MainActivity extends BaseActivity implements MainView {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -42,18 +42,15 @@ public class MainActivity extends BaseActivity implements MainView{
     private View navHeader;
     private ImageView imgNavHeaderBg;
 
-
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
 
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenter presenter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
         presenter = new MainPresenter(this);
@@ -83,7 +80,7 @@ public class MainActivity extends BaseActivity implements MainView{
         navHeader = navigationView.getHeaderView(0);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
 
-        navigationDrawerManager = new NavigationDrawerManager(this,navigationView,drawer,navHeader,imgNavHeaderBg);
+        navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
     }
 
@@ -138,17 +135,17 @@ public class MainActivity extends BaseActivity implements MainView{
         });
     }
 
-    @Override
     public void loadFragment() {
 
         navigationDrawerManager.selectNavMenu(NavigationDrawerManager.navItemIndex);
         navigationDrawerManager.setToolbarTitle(getSupportActionBar());
 
-        if (getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.CURRENT_TAG) != null) {
-            navigationDrawerManager.closeDrawer();
-            toggleFab();
-            return;
-        }
+        Fragment fragment = getFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        fragmentTransaction.replace(R.id.frame, fragment, NavigationDrawerManager.CURRENT_TAG);
+        fragmentTransaction.commit();
 
         Runnable mPendingRunnable = new Runnable() {
             @Override
@@ -158,29 +155,24 @@ public class MainActivity extends BaseActivity implements MainView{
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, NavigationDrawerManager.CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
+                fragmentTransaction.commit();
             }
         };
 
-        // If mPendingRunnable is not null, then add to the message queue
         if (mPendingRunnable != null) {
             mHandler.post(mPendingRunnable);
         }
 
-        // show or hide the fab button
         toggleFab();
-
-        //Closing drawer on item click
         navigationDrawerManager.closeDrawer();
 
-        invalidateOptionsMenu();
     }
 
     private Fragment getFragment() {
 
         switch (NavigationDrawerManager.navItemIndex) {
             case 0:
-                HomeFragment homeFragment = new HomeFragment();
+                HomeFragment homeFragment = HomeFragment.getInstance();
                 return homeFragment;
             case 1:
                 ContributionFragment contributionFragment = new ContributionFragment();
@@ -203,7 +195,6 @@ public class MainActivity extends BaseActivity implements MainView{
                 return new HomeFragment();
         }
     }
-
 
 
     @Override
@@ -230,10 +221,7 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (NavigationDrawerManager.navItemIndex == 0) {
-            getMenuInflater().inflate(R.menu.main, menu);
-        }
-
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

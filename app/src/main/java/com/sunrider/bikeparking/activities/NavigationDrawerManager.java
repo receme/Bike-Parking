@@ -141,7 +141,6 @@ public class NavigationDrawerManager {
 
     public void setToolbarTitle(ActionBar supportActionBar) {
 
-        Toast.makeText(((MainActivity)mainView),activityTitles[NavigationDrawerManager.navItemIndex],Toast.LENGTH_SHORT).show();
         supportActionBar.setTitle(activityTitles[NavigationDrawerManager.navItemIndex]);
     }
 }
