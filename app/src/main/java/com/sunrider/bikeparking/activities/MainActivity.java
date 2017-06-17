@@ -1,15 +1,24 @@
 package com.sunrider.bikeparking.activities;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.sunrider.bikeparking.BuildConfig;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.fragments.AboutFragment;
 import com.sunrider.bikeparking.fragments.ContributionFragment;
@@ -26,6 +36,8 @@ import com.sunrider.bikeparking.fragments.PrivacyPolicyFragment;
 import com.sunrider.bikeparking.fragments.SettingsFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.presenters.MainPresenter;
+import com.sunrider.bikeparking.utils.AppUtilMethods;
+import com.sunrider.bikeparking.utils.LocationUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +59,10 @@ public class MainActivity extends BaseActivity implements MainView {
 
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenter presenter;
+    private LocationUtils locationUtils;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +78,63 @@ public class MainActivity extends BaseActivity implements MainView {
             loadFragment();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationUtils = LocationUtils.getInstance(this);
+        if (locationUtils.getRequestingLocationUpdates() && checkPermissions()) {
+            locationUtils.startLocationUpdates();
+        } else if (!checkPermissions()) {
+            requestPermissions();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(locationUtils!=null){
+            locationUtils.stopLocationUpdates();
+        }
+    }
+
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            AppUtilMethods.showSnackbar(this, R.string.permission_rationale,
+                    android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    });
+
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
 
     @Override
     public int getLayoutResourceId() {
@@ -82,6 +155,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
+        locationUtils = LocationUtils.getInstance(this);
     }
 
     @Override
@@ -196,7 +270,6 @@ public class MainActivity extends BaseActivity implements MainView {
         }
     }
 
-
     @Override
     public void onBackPressed() {
 
@@ -243,5 +316,56 @@ public class MainActivity extends BaseActivity implements MainView {
             fab.show();
         else
             fab.hide();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case LocationUtils.REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    //For RESULT_OK: User agreed to make required location settings changes.
+                    //Nothing to do. startLocationupdates() gets called in onResume again.
+                    case Activity.RESULT_CANCELED:
+                        Log.i(TAG, "User chose not to make required location settings changes.");
+                        locationUtils.setRequestingLocationUpdates(false);
+                        //updateUI();
+                        break;
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionResult");
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                Log.i(TAG, "User interaction was cancelled.");
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (locationUtils.getRequestingLocationUpdates()) {
+                    Log.i(TAG, "Permission granted, updates requested, starting location updates");
+                    locationUtils.startLocationUpdates();
+                }
+            } else {
+
+                AppUtilMethods.showSnackbar(this,R.string.permission_denied_explanation,
+                        R.string.nav_settings, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // Build intent that displays the App settings screen.
+                                Intent intent = new Intent();
+                                intent.setAction(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package",
+                                        BuildConfig.APPLICATION_ID, null);
+                                intent.setData(uri);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        });
+            }
+        }
     }
 }
