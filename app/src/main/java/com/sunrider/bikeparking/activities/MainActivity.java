@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         }
 
         locationUtils = LocationUtils.getInstance(this);
-        locationUtils.setRequestingLocationUpdates(false);
+        //locationUtils.setRequestingLocationUpdates(false);
         locationUtils.setLocationListener(this);
     }
 
@@ -97,9 +97,9 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     private void initializeLocationUpdates(){
 
         locationUtils = LocationUtils.getInstance(this);
-        boolean state = locationUtils.getRequestingLocationUpdates();
+        //boolean state = locationUtils.getRequestingLocationUpdates();
 
-        if (!state && checkPermissions()) {
+        if (checkPermissions()) {
             locationUtils.initializeLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         }
     }
 
-    private boolean checkPermissions() {
+    public boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
@@ -345,7 +345,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     //Nothing to do. startLocationupdates() gets called in onResume again.
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
-                        locationUtils.setRequestingLocationUpdates(false);
+                        //locationUtils.setRequestingLocationUpdates(false);
                         //updateUI();
                         break;
                 }
@@ -361,10 +361,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             if (grantResults.length <= 0) {
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (locationUtils.getRequestingLocationUpdates()) {
+                //if (locationUtils.getRequestingLocationUpdates()) {
                     Log.i(TAG, "Permission granted, updates requested, starting location updates");
                     locationUtils.initializeLocationUpdates();
-                }
+                //}
             } else {
 
                 AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
@@ -394,7 +394,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
             if (locationUtils != null) {
                 locationUtils.stopLocationUpdates();
-                locationUtils.setRequestingLocationUpdates(false);
+            //    locationUtils.setRequestingLocationUpdates(false);
             }
         }
     }

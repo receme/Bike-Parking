@@ -1,10 +1,13 @@
 package com.sunrider.bikeparking.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +22,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.sunrider.bikeparking.R;
+import com.sunrider.bikeparking.activities.MainActivity;
+import com.sunrider.bikeparking.utils.LocationUtils;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
@@ -33,8 +38,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private OnFragmentInteractionListener mListener;
     private static HomeFragment instance;
 
-    public static HomeFragment getInstance(){
-        if(instance == null){
+    public static HomeFragment getInstance() {
+        if (instance == null) {
             instance = new HomeFragment();
         }
 
@@ -89,15 +94,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mListener = null;
     }
 
+    @SuppressWarnings("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+
+        if(((MainActivity)getActivity()).checkPermissions()){
+            googleMap.setMyLocationEnabled(true);
+
+        }
+
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setAllGesturesEnabled(true);
+
         mListener.onMapLoadingComplete();
     }
 
     public void showLocation(Location location) {
-        if(googleMap!=null){
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),10));
+        if (googleMap != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
             googleMap.moveCamera(cameraUpdate);
         }
     }

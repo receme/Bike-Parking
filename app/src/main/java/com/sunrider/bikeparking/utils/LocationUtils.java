@@ -38,7 +38,7 @@ public class LocationUtils {
     private LocationSettingsRequest mLocationSettingsRequest;
     private Location mCurrentLocation;
 
-    private boolean mRequestingLocationUpdates;
+    //private boolean mRequestingLocationUpdates;
 
     private Activity activity;
 
@@ -96,10 +96,10 @@ public class LocationUtils {
 
     public void initializeLocationUpdates() {
 
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
+        //if (!mRequestingLocationUpdates) {
+          //  mRequestingLocationUpdates = true;
             startLocationUpdates();
-        }
+        //}
     }
 
     private void startLocationUpdates() {
@@ -140,7 +140,7 @@ public class LocationUtils {
                                         "fixed here. Fix in Settings.";
                                 Log.e(TAG, errorMessage);
                                 Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show();
-                                mRequestingLocationUpdates = false;
+                                //mRequestingLocationUpdates = false;
                         }
 
                         //updateUI();
@@ -158,18 +158,18 @@ public class LocationUtils {
                 .addOnCompleteListener(activity, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        mRequestingLocationUpdates = false;
+                        //mRequestingLocationUpdates = false;
                     }
                 });
     }
 
-    public boolean getRequestingLocationUpdates() {
-        return mRequestingLocationUpdates;
-    }
-
-    public void setRequestingLocationUpdates(boolean mRequestingLocationUpdates) {
-        this.mRequestingLocationUpdates = mRequestingLocationUpdates;
-    }
+//    public boolean getRequestingLocationUpdates() {
+//        return mRequestingLocationUpdates;
+//    }
+//
+//    public void setRequestingLocationUpdates(boolean mRequestingLocationUpdates) {
+//        this.mRequestingLocationUpdates = mRequestingLocationUpdates;
+//    }
 
     public interface LocationListener{
         void onLocationFound(Location location);
