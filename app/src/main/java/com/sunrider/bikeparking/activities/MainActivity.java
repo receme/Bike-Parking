@@ -97,9 +97,9 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     private void initializeLocationUpdates(){
 
         locationUtils = LocationUtils.getInstance(this);
-        locationUtils.setRequestingLocationUpdates(true);
+        boolean state = locationUtils.getRequestingLocationUpdates();
 
-        if (locationUtils.getRequestingLocationUpdates() && checkPermissions()) {
+        if (!state && checkPermissions()) {
             locationUtils.initializeLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
@@ -394,6 +394,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
             if (locationUtils != null) {
                 locationUtils.stopLocationUpdates();
+                locationUtils.setRequestingLocationUpdates(false);
             }
         }
     }

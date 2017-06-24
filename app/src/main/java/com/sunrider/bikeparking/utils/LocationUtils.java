@@ -149,10 +149,10 @@ public class LocationUtils {
     }
 
     public void stopLocationUpdates() {
-        if (!mRequestingLocationUpdates) {
-            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
-            return;
-        }
+//        if (!mRequestingLocationUpdates) {
+//            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
+//            return;
+//        }
 
         mFusedLocationClient.removeLocationUpdates(mLocationCallback)
                 .addOnCompleteListener(activity, new OnCompleteListener<Void>() {
