@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,7 +43,7 @@ import com.sunrider.bikeparking.utils.LocationUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView {
+public class MainActivity extends BaseActivity implements MainView, LocationUtils.LocationListener, HomeFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -60,6 +61,7 @@ public class MainActivity extends BaseActivity implements MainView {
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenter presenter;
     private LocationUtils locationUtils;
+    private boolean isMapLoaded = false;
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -77,14 +79,28 @@ public class MainActivity extends BaseActivity implements MainView {
             navigationDrawerManager.setCurrentTag(NavigationDrawerManager.TAG_HOME);
             loadFragment();
         }
+
+        locationUtils = LocationUtils.getInstance(this);
+        locationUtils.setRequestingLocationUpdates(false);
+        locationUtils.setLocationListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (isMapLoaded) {
+            initializeLocationUpdates();
+        }
+    }
+
+    private void initializeLocationUpdates(){
+
         locationUtils = LocationUtils.getInstance(this);
+        locationUtils.setRequestingLocationUpdates(true);
+
         if (locationUtils.getRequestingLocationUpdates() && checkPermissions()) {
-            locationUtils.startLocationUpdates();
+            locationUtils.initializeLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
         }
@@ -94,7 +110,7 @@ public class MainActivity extends BaseActivity implements MainView {
     protected void onStop() {
         super.onStop();
 
-        if(locationUtils!=null){
+        if (locationUtils != null) {
             locationUtils.stopLocationUpdates();
         }
     }
@@ -156,6 +172,7 @@ public class MainActivity extends BaseActivity implements MainView {
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
         locationUtils = LocationUtils.getInstance(this);
+        locationUtils.initializeLocationUpdates();
     }
 
     @Override
@@ -346,11 +363,11 @@ public class MainActivity extends BaseActivity implements MainView {
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (locationUtils.getRequestingLocationUpdates()) {
                     Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                    locationUtils.startLocationUpdates();
+                    locationUtils.initializeLocationUpdates();
                 }
             } else {
 
-                AppUtilMethods.showSnackbar(this,R.string.permission_denied_explanation,
+                AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
                         R.string.nav_settings, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -367,5 +384,23 @@ public class MainActivity extends BaseActivity implements MainView {
                         });
             }
         }
+    }
+
+    @Override
+    public void onLocationFound(Location location) {
+        if (location != null) {
+            HomeFragment homeFragment = HomeFragment.getInstance();
+            homeFragment.showLocation(location);
+
+            if (locationUtils != null) {
+                locationUtils.stopLocationUpdates();
+            }
+        }
+    }
+
+    @Override
+    public void onMapLoadingComplete() {
+        isMapLoaded = true;
+        initializeLocationUpdates();
     }
 }

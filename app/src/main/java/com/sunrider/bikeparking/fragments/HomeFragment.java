@@ -1,6 +1,7 @@
 package com.sunrider.bikeparking.fragments;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private String mParam1;
     private String mParam2;
+
+    private GoogleMap googleMap;
 
     private OnFragmentInteractionListener mListener;
     private static HomeFragment instance;
@@ -72,21 +75,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        }
     }
 
     @Override
@@ -97,12 +91,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        mListener.onMapLoadingComplete();
+    }
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(23,90),10));
-        googleMap.moveCamera(cameraUpdate);
+    public void showLocation(Location location) {
+        if(googleMap!=null){
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),10));
+            googleMap.moveCamera(cameraUpdate);
+        }
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onMapLoadingComplete();
     }
 }

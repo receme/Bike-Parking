@@ -15,6 +15,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
@@ -42,6 +43,7 @@ public class LocationUtils {
     private Activity activity;
 
     private static LocationUtils instance;
+    private LocationListener listener;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -49,8 +51,11 @@ public class LocationUtils {
             super.onLocationResult(locationResult);
 
             mCurrentLocation = locationResult.getLastLocation();
-            //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-            //updateLocationUI();
+            if(listener!=null){
+                listener.onLocationFound(mCurrentLocation);
+            }
+
+            System.out.println(mCurrentLocation.getLatitude()+ " , " + mCurrentLocation.getLongitude());
         }
     };
 
@@ -62,10 +67,15 @@ public class LocationUtils {
         return instance;
     }
 
+    public void setLocationListener(LocationListener listener) {
+        this.listener = listener;
+    }
+
     private LocationUtils(Activity activity) {
         this.activity = activity;
 
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        mSettingsClient = LocationServices.getSettingsClient(activity);
         createLocationRequest();
         buildLocationSettingsRequest();
     }
@@ -92,7 +102,7 @@ public class LocationUtils {
         }
     }
 
-    public void startLocationUpdates() {
+    private void startLocationUpdates() {
 
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
@@ -149,7 +159,6 @@ public class LocationUtils {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mRequestingLocationUpdates = false;
-                        //setButtonsEnabledState();
                     }
                 });
     }
@@ -160,5 +169,9 @@ public class LocationUtils {
 
     public void setRequestingLocationUpdates(boolean mRequestingLocationUpdates) {
         this.mRequestingLocationUpdates = mRequestingLocationUpdates;
+    }
+
+    public interface LocationListener{
+        void onLocationFound(Location location);
     }
 }
