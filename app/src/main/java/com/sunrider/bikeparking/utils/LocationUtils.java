@@ -3,6 +3,8 @@ package com.sunrider.bikeparking.utils;
 
 import android.app.Activity;
 import android.content.IntentSender;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -24,6 +26,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.sunrider.bikeparking.models.ParkingLocation;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class LocationUtils {
 
@@ -149,6 +156,52 @@ public class LocationUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getAddress(double lat,double lng){
+
+        Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+        String addressLine = null;
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            if(addresses!=null && addresses.size()>0){
+                String smallAddress = addresses.get(0).getAddressLine(0);
+                String cityName = addresses.get(0).getLocality();
+                String stateName = addresses.get(0).getAdminArea();
+                String countryName = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName();
+
+                StringBuilder sb = new StringBuilder("");
+                if(smallAddress!=null){
+                    sb.append(smallAddress);
+                }
+                if(cityName!=null){
+                    sb.append(", ");
+                    sb.append(cityName);
+                }
+                if(stateName!=null){
+                    sb.append(", ");
+                    sb.append(stateName);
+                }
+                if(countryName!=null){
+                    sb.append(", ");
+                    sb.append(countryName);
+                }
+                if(postalCode!=null){
+                    sb.append(", ");
+                    sb.append(postalCode);
+                }
+
+                addressLine = sb.toString();
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return addressLine;
     }
 
     public interface LocationListener {

@@ -238,9 +238,14 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     addingNewLocationEntry = false;
 
                     ParkingLocation location = homeFragment.getParkingLocation();
+                    AppUtilMethods.showToast(MainActivity.this,location.getLat()+" - "+location.getLng());
 
-                    AppUtilMethods.showToast(MainActivity.this,location.getLat()+" "+location.getLng());
+                    String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(),location.getLng());
+                    location.setAddress(address);
+
+                    AppUtilMethods.showToast(MainActivity.this,address);
                     homeFragment.disableLocationPicker();
+                    
                 }
             }
         });
