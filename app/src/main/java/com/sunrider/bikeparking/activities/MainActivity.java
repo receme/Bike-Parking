@@ -8,12 +8,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.sunrider.bikeparking.BuildConfig;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.fragments.AboutFragment;
@@ -259,7 +256,9 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
                                     homeFragment.disableLocationPicker();
                                     progressBar.setVisibility(View.GONE);
-                                    loadLocationEntyFragment();
+
+                                    Intent intent = new Intent(MainActivity.this,LocationEntryActivity.class);
+                                    startActivity(intent);
                                 }
                             });
 
@@ -271,11 +270,6 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                 }
             }
         });
-    }
-
-    private void loadLocationEntyFragment() {
-
-        
     }
 
     public void loadFragment() {
