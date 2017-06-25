@@ -38,8 +38,6 @@ public class LocationUtils {
     private LocationSettingsRequest mLocationSettingsRequest;
     private Location mCurrentLocation;
 
-    //private boolean mRequestingLocationUpdates;
-
     private Activity activity;
 
     private static LocationUtils instance;
@@ -51,11 +49,11 @@ public class LocationUtils {
             super.onLocationResult(locationResult);
 
             mCurrentLocation = locationResult.getLastLocation();
-            if(listener!=null){
+            if (listener != null) {
                 listener.onLocationFound(mCurrentLocation);
             }
 
-            System.out.println(mCurrentLocation.getLatitude()+ " , " + mCurrentLocation.getLongitude());
+            System.out.println(mCurrentLocation.getLatitude() + " , " + mCurrentLocation.getLongitude());
         }
     };
 
@@ -94,15 +92,7 @@ public class LocationUtils {
         mLocationSettingsRequest = builder.build();
     }
 
-    public void initializeLocationUpdates() {
-
-        //if (!mRequestingLocationUpdates) {
-          //  mRequestingLocationUpdates = true;
-            startLocationUpdates();
-        //}
-    }
-
-    private void startLocationUpdates() {
+    public void startLocationUpdates() {
 
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
@@ -140,7 +130,6 @@ public class LocationUtils {
                                         "fixed here. Fix in Settings.";
                                 Log.e(TAG, errorMessage);
                                 Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show();
-                                //mRequestingLocationUpdates = false;
                         }
 
                         //updateUI();
@@ -149,29 +138,20 @@ public class LocationUtils {
     }
 
     public void stopLocationUpdates() {
-//        if (!mRequestingLocationUpdates) {
-//            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
-//            return;
-//        }
+        try {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+                    .addOnCompleteListener(activity, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
 
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
-                .addOnCompleteListener(activity, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        //mRequestingLocationUpdates = false;
-                    }
-                });
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-//    public boolean getRequestingLocationUpdates() {
-//        return mRequestingLocationUpdates;
-//    }
-//
-//    public void setRequestingLocationUpdates(boolean mRequestingLocationUpdates) {
-//        this.mRequestingLocationUpdates = mRequestingLocationUpdates;
-//    }
-
-    public interface LocationListener{
+    public interface LocationListener {
         void onLocationFound(Location location);
     }
 }

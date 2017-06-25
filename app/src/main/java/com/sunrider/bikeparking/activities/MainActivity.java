@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.sunrider.bikeparking.BuildConfig;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.fragments.AboutFragment;
@@ -36,14 +37,16 @@ import com.sunrider.bikeparking.fragments.InstructionFragment;
 import com.sunrider.bikeparking.fragments.PrivacyPolicyFragment;
 import com.sunrider.bikeparking.fragments.SettingsFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
+import com.sunrider.bikeparking.models.ParkingLocation;
 import com.sunrider.bikeparking.presenters.MainPresenter;
+import com.sunrider.bikeparking.services.firebase.FirebaseManager;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.LocationUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView, LocationUtils.LocationListener, HomeFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements MainView, LocationUtils.LocationListener, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -55,13 +58,17 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     private View navHeader;
     private ImageView imgNavHeaderBg;
 
-    private boolean shouldLoadHomeFragOnBackPress = true;
+
     private Handler mHandler;
 
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenter presenter;
     private LocationUtils locationUtils;
+
+    //state variables
+    private boolean shouldLoadHomeFragOnBackPress = true;
     private boolean isMapLoaded = false;
+    private boolean addingNewLocationEntry = false;
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -71,7 +78,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-        presenter = new MainPresenter(this);
+        presenter = new MainPresenter(this,new FirebaseManager(this));
         presenter.init();
 
         if (savedInstanceState == null) {
@@ -81,7 +88,6 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         }
 
         locationUtils = LocationUtils.getInstance(this);
-        //locationUtils.setRequestingLocationUpdates(false);
         locationUtils.setLocationListener(this);
     }
 
@@ -97,10 +103,9 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     private void initializeLocationUpdates(){
 
         locationUtils = LocationUtils.getInstance(this);
-        //boolean state = locationUtils.getRequestingLocationUpdates();
 
         if (checkPermissions()) {
-            locationUtils.initializeLocationUpdates();
+            locationUtils.startLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
         }
@@ -172,7 +177,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
         locationUtils = LocationUtils.getInstance(this);
-        locationUtils.initializeLocationUpdates();
+        locationUtils.startLocationUpdates();
     }
 
     @Override
@@ -219,9 +224,24 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
 
+                HomeFragment homeFragment = HomeFragment.getInstance();
+
+                if(!addingNewLocationEntry){
+                    fab.setImageResource(R.mipmap.ic_action_check);
+                    addingNewLocationEntry = true;
+
+                    homeFragment.enableLocationPicker();
+                }
+                else{
+                    fab.setImageResource(R.mipmap.ic_action_add);
+                    addingNewLocationEntry = false;
+
+                    ParkingLocation location = homeFragment.getParkingLocation();
+
+                    AppUtilMethods.showToast(MainActivity.this,location.getLat()+" "+location.getLng());
+                    homeFragment.disableLocationPicker();
+                }
             }
         });
     }
@@ -345,8 +365,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     //Nothing to do. startLocationupdates() gets called in onResume again.
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
-                        //locationUtils.setRequestingLocationUpdates(false);
-                        //updateUI();
+
                         break;
                 }
                 break;
@@ -361,10 +380,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             if (grantResults.length <= 0) {
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //if (locationUtils.getRequestingLocationUpdates()) {
                     Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                    locationUtils.initializeLocationUpdates();
-                //}
+                    locationUtils.startLocationUpdates();
             } else {
 
                 AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
@@ -394,7 +411,6 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
             if (locationUtils != null) {
                 locationUtils.stopLocationUpdates();
-            //    locationUtils.setRequestingLocationUpdates(false);
             }
         }
     }
@@ -403,5 +419,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     public void onMapLoadingComplete() {
         isMapLoaded = true;
         initializeLocationUpdates();
+    }
+
+    @Override
+    public void onDatabaseError(String message) {
+        AppUtilMethods.showToast(this,message);
     }
 }

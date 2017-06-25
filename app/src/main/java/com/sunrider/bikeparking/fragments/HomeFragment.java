@@ -21,8 +21,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.MainActivity;
+import com.sunrider.bikeparking.models.ParkingLocation;
 import com.sunrider.bikeparking.utils.LocationUtils;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -37,6 +40,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
     private static HomeFragment instance;
+
+    private Marker locationPickerMarker;
+    private ParkingLocation parkingLocation;
 
     public static HomeFragment getInstance() {
         if (instance == null) {
@@ -107,6 +113,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
+
         mListener.onMapLoadingComplete();
     }
 
@@ -115,6 +122,39 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
             googleMap.moveCamera(cameraUpdate);
         }
+    }
+
+    public void enableLocationPicker() {
+
+        if(googleMap!=null){
+            locationPickerMarker = googleMap.addMarker(new MarkerOptions()
+                .position(googleMap.getCameraPosition().target)
+                .title("Pick a location").draggable(true));
+
+        }
+    }
+
+    public void disableLocationPicker() {
+
+        if(locationPickerMarker!=null){
+            locationPickerMarker.remove();
+        }
+
+    }
+
+    public ParkingLocation getParkingLocation() {
+
+        if(locationPickerMarker!=null){
+
+            LatLng position = locationPickerMarker.getPosition();
+            ParkingLocation parkingLocation = new ParkingLocation();
+            parkingLocation.setLat(position.latitude);
+            parkingLocation.setLng(position.longitude);
+
+            return parkingLocation;
+        }
+
+        return null;
     }
 
     public interface OnFragmentInteractionListener {
