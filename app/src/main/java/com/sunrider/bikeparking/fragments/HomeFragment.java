@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,9 +27,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.MainActivity;
 import com.sunrider.bikeparking.models.ParkingLocation;
+import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.LocationUtils;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback {
+import butterknife.BindView;
+
+public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -43,6 +47,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private Marker locationPickerMarker;
     private ParkingLocation parkingLocation;
+
 
     public static HomeFragment getInstance() {
         if (instance == null) {
@@ -110,6 +115,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         }
 
+        googleMap.setOnMarkerDragListener(this);
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
@@ -155,6 +161,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
         return null;
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+
     }
 
     public interface OnFragmentInteractionListener {

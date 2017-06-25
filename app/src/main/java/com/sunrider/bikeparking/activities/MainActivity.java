@@ -8,6 +8,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -54,6 +56,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     DrawerLayout drawer;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private View navHeader;
     private ImageView imgNavHeaderBg;
@@ -225,7 +229,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             @Override
             public void onClick(View view) {
 
-                HomeFragment homeFragment = HomeFragment.getInstance();
+                final HomeFragment homeFragment = HomeFragment.getInstance();
 
                 if(!addingNewLocationEntry){
                     fab.setImageResource(R.mipmap.ic_action_check);
@@ -237,18 +241,41 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     fab.setImageResource(R.mipmap.ic_action_add);
                     addingNewLocationEntry = false;
 
-                    ParkingLocation location = homeFragment.getParkingLocation();
+                    final ParkingLocation location = homeFragment.getParkingLocation();
                     AppUtilMethods.showToast(MainActivity.this,location.getLat()+" - "+location.getLng());
 
-                    String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(),location.getLng());
-                    location.setAddress(address);
+                    progressBar.setVisibility(View.VISIBLE);
 
-                    AppUtilMethods.showToast(MainActivity.this,address);
-                    homeFragment.disableLocationPicker();
-                    
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+
+                            final String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(),location.getLng());
+                            location.setAddress(address);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    homeFragment.disableLocationPicker();
+                                    progressBar.setVisibility(View.GONE);
+                                    loadLocationEntyFragment();
+                                }
+                            });
+
+                        }
+                    };
+
+                    new Thread(runnable).start();
+
                 }
             }
         });
+    }
+
+    private void loadLocationEntyFragment() {
+
+        
     }
 
     public void loadFragment() {

@@ -35,4 +35,9 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
 
+    <string name="comment">Comments</string>
+    <string name="address">Address</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
