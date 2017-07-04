@@ -1,19 +1,12 @@
 package com.sunrider.bikeparking.fragments;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,11 +19,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.MainActivity;
-import com.sunrider.bikeparking.models.ParkingLocation;
-import com.sunrider.bikeparking.utils.AppUtilMethods;
-import com.sunrider.bikeparking.utils.LocationUtils;
-
-import butterknife.BindView;
+import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
 
@@ -46,8 +35,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
     private static HomeFragment instance;
 
     private Marker locationPickerMarker;
-    private ParkingLocation parkingLocation;
-
 
     public static HomeFragment getInstance() {
         if (instance == null) {
@@ -148,12 +135,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
-    public ParkingLocation getParkingLocation() {
+    public ParkingLocationEntity getParkingLocation() {
 
         if(locationPickerMarker!=null){
 
             LatLng position = locationPickerMarker.getPosition();
-            ParkingLocation parkingLocation = new ParkingLocation();
+            ParkingLocationEntity parkingLocation = new ParkingLocationEntity();
             parkingLocation.setLat(position.latitude);
             parkingLocation.setLng(position.longitude);
 

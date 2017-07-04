@@ -1,22 +1,38 @@
-package com.sunrider.bikeparking.models;
+package com.sunrider.bikeparking.db.entities;
 
 
-public class ParkingLocation {
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
+@Entity(tableName = "parkinglocation")
+public class ParkingLocationEntity {
+
+    @PrimaryKey(autoGenerate = true)
     private long id;
+
+    @ColumnInfo(name = "address")
     private String address;
+
+    @ColumnInfo(name = "lat")
     private double lat;
+
+    @ColumnInfo(name = "lng")
     private double lng;
+
+    @ColumnInfo(name = "comment")
     private String comment;
 
-    public ParkingLocation(String address, double lat, double lng, String comment) {
+    public ParkingLocationEntity(String address, double lat, double lng, String comment) {
         this.address = address;
         this.lat = lat;
         this.lng = lng;
         this.comment = comment;
     }
 
-    public ParkingLocation() {
+    @Ignore
+    public ParkingLocationEntity() {
     }
 
     public long getId() {

@@ -29,6 +29,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.sunrider.bikeparking.BuildConfig;
 import com.sunrider.bikeparking.R;
+import com.sunrider.bikeparking.db.DBManager;
+import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
 import com.sunrider.bikeparking.fragments.AboutFragment;
 import com.sunrider.bikeparking.fragments.ContributionFragment;
 import com.sunrider.bikeparking.fragments.HomeFragment;
@@ -36,7 +38,6 @@ import com.sunrider.bikeparking.fragments.InstructionFragment;
 import com.sunrider.bikeparking.fragments.PrivacyPolicyFragment;
 import com.sunrider.bikeparking.fragments.SettingsFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
-import com.sunrider.bikeparking.models.ParkingLocation;
 import com.sunrider.bikeparking.presenters.MainPresenter;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
@@ -79,7 +80,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-        presenter = new MainPresenter(this,new FirebaseManager(this));
+        presenter = new MainPresenter(this,new FirebaseManager(this), DBManager.getInstance(this));
         presenter.init();
 
         if (savedInstanceState == null) {
@@ -238,7 +239,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     fab.setImageResource(R.mipmap.ic_action_add);
                     addingNewLocationEntry = false;
 
-                    final ParkingLocation location = homeFragment.getParkingLocation();
+                    final ParkingLocationEntity location = homeFragment.getParkingLocation();
                     AppUtilMethods.showToast(MainActivity.this,location.getLat()+" - "+location.getLng());
 
                     progressBar.setVisibility(View.VISIBLE);
