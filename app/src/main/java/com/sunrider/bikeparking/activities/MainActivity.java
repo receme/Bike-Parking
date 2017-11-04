@@ -54,8 +54,6 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     DrawerLayout drawer;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
 
     private View navHeader;
     private ImageView imgNavHeaderBg;
@@ -242,7 +240,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                     final ParkingLocationEntity location = homeFragment.getParkingLocation();
                     AppUtilMethods.showToast(MainActivity.this,location.getLat()+" - "+location.getLng());
 
-                    progressBar.setVisibility(View.VISIBLE);
+                    //progressBar.setVisibility(View.VISIBLE);
 
                     Runnable runnable = new Runnable() {
                         @Override
@@ -256,7 +254,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                                 public void run() {
 
                                     homeFragment.disableLocationPicker();
-                                    progressBar.setVisibility(View.GONE);
+                                    //progressBar.setVisibility(View.GONE);
 
                                     Intent intent = new Intent(MainActivity.this,LocationEntryActivity.class);
                                     startActivity(intent);

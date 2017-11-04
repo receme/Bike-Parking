@@ -24,4 +24,12 @@ public class AppUtilMethods {
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(activity.getString(actionStringId), listener).show();
     }
+
+    public static boolean isStartWithCapitalLetters(final String inputStr){
+
+        if(inputStr == null || inputStr.isEmpty())
+            return false;
+
+        return inputStr.matches("\\b[A-Z]\\b");
+    }
 }
