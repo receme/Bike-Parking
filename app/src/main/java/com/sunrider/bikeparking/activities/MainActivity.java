@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -78,7 +77,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-        presenter = new MainPresenter(this,new FirebaseManager(this), DBManager.getInstance(this));
+        presenter = new MainPresenter(this, new FirebaseManager(this), DBManager.getInstance(this));
         presenter.init();
 
         if (savedInstanceState == null) {
@@ -100,7 +99,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
         }
     }
 
-    private void initializeLocationUpdates(){
+    private void initializeLocationUpdates() {
 
         locationUtils = LocationUtils.getInstance(this);
 
@@ -190,7 +189,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     private void loadNavHeader() {
 
         Glide.with(this).asDrawable()
-                .load(R.drawable.nav_menu_header_bg)
+                .load(R.mipmap.nav_menu_header_bg)
                 .into(imgNavHeaderBg);
 
         navigationDrawerManager.setActionView(3, R.layout.menu_dot);
@@ -225,20 +224,19 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             @Override
             public void onClick(View view) {
 
-                final HomeFragment homeFragment = HomeFragment.getInstance();
+                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
 
-                if(!addingNewLocationEntry){
+                if (!addingNewLocationEntry) {
                     fab.setImageResource(R.mipmap.ic_action_check);
                     addingNewLocationEntry = true;
 
                     homeFragment.enableLocationPicker();
-                }
-                else{
+                } else {
                     fab.setImageResource(R.mipmap.ic_action_add);
                     addingNewLocationEntry = false;
 
                     final ParkingLocationEntity location = homeFragment.getParkingLocation();
-                    AppUtilMethods.showToast(MainActivity.this,location.getLat()+" - "+location.getLng());
+                    AppUtilMethods.showToast(MainActivity.this, location.getLat() + " - " + location.getLng());
 
                     //progressBar.setVisibility(View.VISIBLE);
 
@@ -246,7 +244,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                         @Override
                         public void run() {
 
-                            final String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(),location.getLng());
+                            final String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(), location.getLng());
                             location.setAddress(address);
 
                             runOnUiThread(new Runnable() {
@@ -256,7 +254,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                                     homeFragment.disableLocationPicker();
                                     //progressBar.setVisibility(View.GONE);
 
-                                    Intent intent = new Intent(MainActivity.this,LocationEntryActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, LocationEntryActivity.class);
                                     startActivity(intent);
                                 }
                             });
@@ -308,7 +306,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
         switch (NavigationDrawerManager.navItemIndex) {
             case 0:
-                HomeFragment homeFragment = HomeFragment.getInstance();
+                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                if (homeFragment == null) {
+                    homeFragment = new HomeFragment();
+                }
                 return homeFragment;
             case 1:
                 ContributionFragment contributionFragment = new ContributionFragment();
@@ -326,9 +327,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             case 5:
                 AboutFragment aboutFragment = new AboutFragment();
                 return aboutFragment;
-
             default:
-                return new HomeFragment();
+                return null;
         }
     }
 
@@ -405,8 +405,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             if (grantResults.length <= 0) {
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                    locationUtils.startLocationUpdates();
+                Log.i(TAG, "Permission granted, updates requested, starting location updates");
+                locationUtils.startLocationUpdates();
             } else {
 
                 AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
@@ -431,12 +431,16 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     @Override
     public void onLocationFound(Location location) {
         if (location != null) {
-            HomeFragment homeFragment = HomeFragment.getInstance();
-            homeFragment.showLocation(location);
+            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+            if (homeFragment != null) {
 
-            if (locationUtils != null) {
-                locationUtils.stopLocationUpdates();
+                homeFragment.showLocation(location);
+
+                if (locationUtils != null) {
+                    locationUtils.stopLocationUpdates();
+                }
             }
+
         }
     }
 
@@ -448,6 +452,6 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
     @Override
     public void onDatabaseError(String message) {
-        AppUtilMethods.showToast(this,message);
+        AppUtilMethods.showToast(this, message);
     }
 }
