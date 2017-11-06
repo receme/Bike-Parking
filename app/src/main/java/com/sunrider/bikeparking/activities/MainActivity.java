@@ -40,12 +40,12 @@ import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.presenters.MainPresenter;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
-import com.sunrider.bikeparking.utils.LocationUtils;
+import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView, LocationUtils.LocationListener, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
+public class MainActivity extends BaseActivity implements MainView, LocationServiceImpl.LocationListener, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenter presenter;
-    private LocationUtils locationUtils;
+    private LocationServiceImpl locationServiceImpl;
 
     //state variables
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -86,8 +86,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             loadFragment();
         }
 
-        locationUtils = LocationUtils.getInstance(this);
-        locationUtils.setLocationListener(this);
+        locationServiceImpl = LocationServiceImpl.getInstance(this);
+        locationServiceImpl.setLocationListener(this);
     }
 
     @Override
@@ -101,10 +101,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
     private void initializeLocationUpdates() {
 
-        locationUtils = LocationUtils.getInstance(this);
+        locationServiceImpl = LocationServiceImpl.getInstance(this);
 
         if (checkPermissions()) {
-            locationUtils.startLocationUpdates();
+            locationServiceImpl.startLocationUpdates();
         } else if (!checkPermissions()) {
             requestPermissions();
         }
@@ -114,8 +114,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     protected void onStop() {
         super.onStop();
 
-        if (locationUtils != null) {
-            locationUtils.stopLocationUpdates();
+        if (locationServiceImpl != null) {
+            locationServiceImpl.stopLocationUpdates();
         }
     }
 
@@ -175,8 +175,8 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
-        locationUtils = LocationUtils.getInstance(this);
-        locationUtils.startLocationUpdates();
+        locationServiceImpl = LocationServiceImpl.getInstance(this);
+        locationServiceImpl.startLocationUpdates();
     }
 
     @Override
@@ -224,7 +224,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
             @Override
             public void onClick(View view) {
 
-                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
 
                 if (!addingNewLocationEntry) {
                     fab.setImageResource(R.mipmap.ic_action_check);
@@ -244,7 +244,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                         @Override
                         public void run() {
 
-                            final String address = LocationUtils.getInstance(MainActivity.this).getAddress(location.getLat(), location.getLng());
+                            final String address = LocationServiceImpl.getInstance(MainActivity.this).getAddress(location.getLat(), location.getLng());
                             location.setAddress(address);
 
                             runOnUiThread(new Runnable() {
@@ -306,7 +306,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
 
         switch (NavigationDrawerManager.navItemIndex) {
             case 0:
-                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
                 }
@@ -384,7 +384,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             // Check for the integer request code originally supplied to startResolutionForResult().
-            case LocationUtils.REQUEST_CHECK_SETTINGS:
+            case LocationServiceImpl.REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     //For RESULT_OK: User agreed to make required location settings changes.
                     //Nothing to do. startLocationupdates() gets called in onResume again.
@@ -406,7 +406,7 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                locationUtils.startLocationUpdates();
+                locationServiceImpl.startLocationUpdates();
             } else {
 
                 AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
@@ -431,13 +431,13 @@ public class MainActivity extends BaseActivity implements MainView, LocationUtil
     @Override
     public void onLocationFound(Location location) {
         if (location != null) {
-            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
             if (homeFragment != null) {
 
                 homeFragment.showLocation(location);
 
-                if (locationUtils != null) {
-                    locationUtils.stopLocationUpdates();
+                if (locationServiceImpl != null) {
+                    locationServiceImpl.stopLocationUpdates();
                 }
             }
 
