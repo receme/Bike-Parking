@@ -11,13 +11,13 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnFailureListener;
 
-public class LocationSettingsCheckerOnFailureListener implements OnFailureListener {
+public class TaskOnFailureListener implements OnFailureListener {
 
     private final Activity activity;
     private final LocationServiceImpl.LocationListener listener;
     private final int requestCode;
 
-    public LocationSettingsCheckerOnFailureListener(Activity activity, LocationServiceImpl.LocationListener listener, int requestCode) {
+    public TaskOnFailureListener(Activity activity, LocationServiceImpl.LocationListener listener, int requestCode) {
         this.activity = activity;
         this.listener = listener;
         this.requestCode = requestCode;

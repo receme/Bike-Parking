@@ -9,15 +9,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class LocationSettingsCheckerOnSuccessListener implements OnSuccessListener<LocationSettingsResponse> {
+public class TaskOnSuccessListener implements OnSuccessListener<LocationSettingsResponse> {
 
     private int locationUpdateCount;
     private final FusedLocationProviderClient mFusedLocationClient;
     private final LocationRequest mLocationRequest;
     private final LocationCallback mLocationCallback;
 
-    public LocationSettingsCheckerOnSuccessListener(int locationUpdateCount, FusedLocationProviderClient mFusedLocationClient,
-                                                    LocationRequest mLocationRequest, LocationCallback mLocationCallback) {
+    public TaskOnSuccessListener(int locationUpdateCount, FusedLocationProviderClient mFusedLocationClient,
+                                 LocationRequest mLocationRequest, LocationCallback mLocationCallback) {
         this.locationUpdateCount = locationUpdateCount;
         this.mFusedLocationClient = mFusedLocationClient;
         this.mLocationRequest = mLocationRequest;

@@ -5,11 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -26,26 +23,22 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.sunrider.bikeparking.BuildConfig;
 import com.sunrider.bikeparking.R;
+import com.sunrider.bikeparking.activities.helper.AppFragmentManager;
 import com.sunrider.bikeparking.db.DBManager;
 import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
-import com.sunrider.bikeparking.fragments.AboutFragment;
-import com.sunrider.bikeparking.fragments.ContributionFragment;
 import com.sunrider.bikeparking.fragments.HomeFragment;
-import com.sunrider.bikeparking.fragments.InstructionFragment;
-import com.sunrider.bikeparking.fragments.PrivacyPolicyFragment;
-import com.sunrider.bikeparking.fragments.SettingsFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
-import com.sunrider.bikeparking.presenters.MainPresenter;
+import com.sunrider.bikeparking.presenters.MainPresenterImpl;
+import com.sunrider.bikeparking.services.dexter.DexterPermissionChecker;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
-import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
+import com.sunrider.bikeparking.utils.AppUtilMethods;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView, LocationServiceImpl.LocationListener, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
+public class MainActivity extends BaseActivity implements MainView, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener{
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -57,12 +50,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
     private View navHeader;
     private ImageView imgNavHeaderBg;
 
-
     private Handler mHandler;
 
     private NavigationDrawerManager navigationDrawerManager;
-    private MainPresenter presenter;
-    private LocationServiceImpl locationServiceImpl;
+    private MainPresenterImpl presenter;
 
     //state variables
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -77,7 +68,12 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-        presenter = new MainPresenter(this, new FirebaseManager(this), DBManager.getInstance(this));
+        presenter = new MainPresenterImpl(
+                this,
+                new FirebaseManager(this),
+                DBManager.getInstance(this),
+                LocationServiceImpl.getInstance(this),
+                new DexterPermissionChecker(this));
         presenter.init();
 
         if (savedInstanceState == null) {
@@ -85,38 +81,35 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
             navigationDrawerManager.setCurrentTag(NavigationDrawerManager.TAG_HOME);
             loadFragment();
         }
-
-        locationServiceImpl = LocationServiceImpl.getInstance(this);
-        locationServiceImpl.setLocationListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (isMapLoaded) {
-            initializeLocationUpdates();
-        }
+//        if (isMapLoaded) {
+//            initializeLocationUpdates();
+//        }
     }
 
-    private void initializeLocationUpdates() {
-
-        locationServiceImpl = LocationServiceImpl.getInstance(this);
-
-        if (checkPermissions()) {
-            locationServiceImpl.startLocationUpdates();
-        } else if (!checkPermissions()) {
-            requestPermissions();
-        }
-    }
+//    private void initializeLocationUpdates() {
+//
+//        locationServiceImpl = LocationServiceImpl.getInstance(this);
+//
+//        if (checkPermissions()) {
+//            locationServiceImpl.startLocationUpdates();
+//        } else if (!checkPermissions()) {
+//            requestPermissions();
+//        }
+//    }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        if (locationServiceImpl != null) {
-            locationServiceImpl.stopLocationUpdates();
-        }
+//        if (locationServiceImpl != null) {
+//            locationServiceImpl.stopLocationUpdates();
+//        }
     }
 
     public boolean checkPermissions() {
@@ -168,15 +161,13 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
 
     @Override
     public void init() {
-        mHandler = new Handler();
 
+        mHandler = new Handler();
         navHeader = navigationView.getHeaderView(0);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
-        locationServiceImpl = LocationServiceImpl.getInstance(this);
-        locationServiceImpl.startLocationUpdates();
+
     }
 
     @Override
@@ -274,17 +265,10 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
         navigationDrawerManager.selectNavMenu(NavigationDrawerManager.navItemIndex);
         navigationDrawerManager.setToolbarTitle(getSupportActionBar());
 
-        Fragment fragment = getFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame, fragment, NavigationDrawerManager.CURRENT_TAG);
-        fragmentTransaction.commit();
-
         Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
-                Fragment fragment = getFragment();
+                Fragment fragment = AppFragmentManager.getFragment(MainActivity.this,NavigationDrawerManager.navItemIndex);
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -302,34 +286,14 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
 
     }
 
-    private Fragment getFragment() {
+    @Override
+    public void showLocationOnMap(Location location) {
 
-        switch (NavigationDrawerManager.navItemIndex) {
-            case 0:
-                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
-                if (homeFragment == null) {
-                    homeFragment = new HomeFragment();
-                }
-                return homeFragment;
-            case 1:
-                ContributionFragment contributionFragment = new ContributionFragment();
-                return contributionFragment;
+    }
 
-            case 2:
-                SettingsFragment settingsFragment = new SettingsFragment();
-                return settingsFragment;
-            case 3:
-                InstructionFragment instructionFragment = new InstructionFragment();
-                return instructionFragment;
-            case 4:
-                PrivacyPolicyFragment privacyPolicyFragment = new PrivacyPolicyFragment();
-                return privacyPolicyFragment;
-            case 5:
-                AboutFragment aboutFragment = new AboutFragment();
-                return aboutFragment;
-            default:
-                return null;
-        }
+    @Override
+    public void saveAsLastKnownLocation(Location location) {
+
     }
 
     @Override
@@ -397,57 +361,67 @@ public class MainActivity extends BaseActivity implements MainView, LocationServ
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionResult");
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults.length <= 0) {
-                Log.i(TAG, "User interaction was cancelled.");
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                locationServiceImpl.startLocationUpdates();
-            } else {
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+//                                           @NonNull int[] grantResults) {
+//        Log.i(TAG, "onRequestPermissionResult");
+//        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+//            if (grantResults.length <= 0) {
+//                Log.i(TAG, "User interaction was cancelled.");
+//            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Log.i(TAG, "Permission granted, updates requested, starting location updates");
+//                //locationServiceImpl.startLocationUpdates();
+//            } else {
+//
+//                AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
+//                        R.string.nav_settings, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                // Build intent that displays the App settings screen.
+//                                Intent intent = new Intent();
+//                                intent.setAction(
+//                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                                Uri uri = Uri.fromParts("package",
+//                                        BuildConfig.APPLICATION_ID, null);
+//                                intent.setData(uri);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                startActivity(intent);
+//                            }
+//                        });
+//            }
+//        }
+//    }
 
-                AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
-                        R.string.nav_settings, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // Build intent that displays the App settings screen.
-                                Intent intent = new Intent();
-                                intent.setAction(
-                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package",
-                                        BuildConfig.APPLICATION_ID, null);
-                                intent.setData(uri);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-                        });
-            }
-        }
-    }
-
-    @Override
-    public void onLocationFound(Location location) {
-        if (location != null) {
-            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
-            if (homeFragment != null) {
-
-                homeFragment.showLocation(location);
-
-                if (locationServiceImpl != null) {
-                    locationServiceImpl.stopLocationUpdates();
-                }
-            }
-
-        }
-    }
+//    @Override
+//    public void onLocationFound(Location location) {
+//        if (location != null) {
+//            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
+//            if (homeFragment != null) {
+//
+//                homeFragment.showLocation(location);
+//
+//                if (locationServiceImpl != null) {
+//                    locationServiceImpl.stopLocationUpdates();
+//                }
+//            }
+//
+//        }
+//    }
+//
+//    @Override
+//    public void onLocationResolutionSuccess() {
+//
+//    }
+//
+//    @Override
+//    public void onLocationResolutionFailed() {
+//
+//    }
 
     @Override
     public void onMapLoadingComplete() {
         isMapLoaded = true;
-        initializeLocationUpdates();
+        //initializeLocationUpdates();
     }
 
     @Override

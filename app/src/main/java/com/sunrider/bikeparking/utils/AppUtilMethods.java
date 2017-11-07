@@ -66,6 +66,7 @@ public class AppUtilMethods {
                 activity.getResources().getString(mainTextStringId),
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(activity.getString(actionStringId), listener).show();
+
     }
 
     public static void showAlert(final Activity activity, final String title, @NonNull final String message, @NonNull final String positiveBtn, final String negativeBtn, final BaseView.AlertViewAction callback) {
@@ -77,15 +78,15 @@ public class AppUtilMethods {
                 hideProgressDialog();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                if (title != null) {
+                if (StringUtils.isNotNullOrEmpty(title)) {
                     builder.setTitle(title);
                 }
 
-                if (message != null) {
+                if (StringUtils.isNotNullOrEmpty(message)) {
                     builder.setMessage(message);
                 }
 
-                if (positiveBtn != null) {
+                if (StringUtils.isNotNullOrEmpty(positiveBtn)) {
                     builder.setPositiveButton(positiveBtn, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -96,7 +97,7 @@ public class AppUtilMethods {
                     });
                 }
 
-                if (negativeBtn != null) {
+                if (StringUtils.isNotNullOrEmpty(negativeBtn)) {
                     builder.setNegativeButton(negativeBtn, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -118,8 +119,9 @@ public class AppUtilMethods {
 
     public static boolean isStartWithCapitalLetters(final String inputStr){
 
-        if(inputStr == null || inputStr.isEmpty())
+        if(!StringUtils.isNotNullOrEmpty(inputStr)){
             return false;
+        }
 
         return inputStr.matches("\\b[A-Z]\\b");
     }

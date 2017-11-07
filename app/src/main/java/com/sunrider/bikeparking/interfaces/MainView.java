@@ -1,9 +1,15 @@
 package com.sunrider.bikeparking.interfaces;
 
 
-public interface MainView {
+import android.location.Location;
+
+public interface MainView extends BaseView {
+
     void init();
     void setupNavigationDrawer();
     void defineClickListener();
     void loadFragment();
+    void showLocationOnMap(Location location);
+    void saveAsLastKnownLocation(Location location);
+
 }

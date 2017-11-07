@@ -61,7 +61,6 @@ public class LocationServiceImpl implements LocationService {
         if (instance == null) {
             instance = new LocationServiceImpl(activity);
         }
-
         return instance;
     }
 
@@ -74,6 +73,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
 
+    @Override
     public void setLocationListener(LocationListener listener) {
         this.listener = listener;
     }
@@ -93,20 +93,22 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @SuppressWarnings("MissingPermission")
-    public void startLocationUpdates() throws Exception {
+    @Override
+    public void startLocationUpdates() {
 
         if (listener == null) {
             //this should not happen.
-            throw new Exception("Location update listener should be set first");
+            return;
         }
 
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(activity,new LocationSettingsCheckerOnSuccessListener(locationUpdateCount,mFusedLocationClient,mLocationRequest,mLocationCallback))
-                .addOnFailureListener(new LocationSettingsCheckerOnFailureListener(activity,listener,REQUEST_CHECK_SETTINGS));
+                .addOnSuccessListener(activity, new TaskOnSuccessListener(locationUpdateCount, mFusedLocationClient, mLocationRequest, mLocationCallback))
+                .addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
 
     }
 
+    @Override
     public void stopLocationUpdates() {
         try {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -162,11 +164,5 @@ public class LocationServiceImpl implements LocationService {
         return addressLine;
     }
 
-    public interface LocationListener {
-        void onLocationFound(Location location);
 
-        void onLocationResolutionSuccess();
-
-        void onLocationResolutionFailed();
-    }
 }

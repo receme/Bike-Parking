@@ -1,9 +1,21 @@
 package com.sunrider.bikeparking.services;
 
 
-import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
+import android.location.Location;
 
 public interface LocationService {
-    void setLocationListener(LocationServiceImpl.LocationListener listener);
-    void startLocationUpdates() throws Exception;
+    void setLocationListener(LocationListener listener);
+
+    void startLocationUpdates();
+
+    void stopLocationUpdates();
+
+
+    interface LocationListener {
+        void onLocationFound(Location location);
+
+        void onLocationResolutionSuccess();
+
+        void onLocationResolutionFailed();
+    }
 }

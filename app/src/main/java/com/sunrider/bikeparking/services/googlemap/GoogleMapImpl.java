@@ -80,11 +80,17 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
                 public void onPositiveBtnClicked() {
 
                     try {
-                        activity.startActivityForResult(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=" + "com.google.android.gms")), GooglePlayServiceUtils.REQ_CODE_INSTALL_PLAYSERVICE);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=" + "com.google.android.gms"));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        activity.startActivityForResult(intent, GooglePlayServiceUtils.REQ_CODE_INSTALL_PLAYSERVICE);
                     } catch (ActivityNotFoundException anfe) {
-                        activity.startActivityForResult(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=" + "com.google.android.gms")), GooglePlayServiceUtils.REQ_CODE_INSTALL_PLAYSERVICE);
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=" + "com.google.android.gms"));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        activity.startActivityForResult(intent, GooglePlayServiceUtils.REQ_CODE_INSTALL_PLAYSERVICE);
+
                     }
 
                 }
