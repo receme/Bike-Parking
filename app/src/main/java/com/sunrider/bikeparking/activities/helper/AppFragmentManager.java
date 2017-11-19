@@ -1,7 +1,6 @@
 package com.sunrider.bikeparking.activities.helper;
 
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
@@ -15,11 +14,16 @@ import com.sunrider.bikeparking.fragments.SettingsFragment;
 
 public class AppFragmentManager {
 
-    public static Fragment getFragment(AppCompatActivity activity, int navIndex){
+    public static Fragment getFragment(AppCompatActivity activity, String tag) {
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentByTag(tag);
+        return fragment;
+    }
+
+    public static Fragment getFragment(AppCompatActivity activity) {
 
         switch (NavigationDrawerManager.navItemIndex) {
             case 0:
-                HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
+                HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
                 }

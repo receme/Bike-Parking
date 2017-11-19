@@ -12,4 +12,6 @@ public interface MainView extends BaseView {
     void showLocationOnMap(Location location);
     void saveAsLastKnownLocation(Location location);
 
+    void openDeviceSettingsPage();
+
 }

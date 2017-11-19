@@ -1,6 +1,8 @@
 package com.sunrider.bikeparking.presenters;
 
 
+import android.location.Location;
+
 import com.sunrider.bikeparking.interfaces.HomeView;
 import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.services.MapService;
@@ -18,5 +20,13 @@ public class HomePresenter extends BasePresenter {
     @Override
     public void init() {
         mapService.loadMap();
+    }
+
+    public void showLocation(Location location) {
+
+        if(mapService.isReady()){
+            mapService.showLocation(location);
+        }
+
     }
 }

@@ -26,6 +26,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     private HomePresenter presenter;
 
     private OnFragmentInteractionListener mListener;
+    private Location location;
 
     public HomeFragment() {
     }
@@ -33,6 +34,8 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        presenter = new HomePresenter(this, new GoogleMapImpl(getActivity(), this));
 
         setHasOptionsMenu(true);
     }
@@ -43,8 +46,12 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
 
-        presenter = new HomePresenter(this, new GoogleMapImpl(getActivity(), this));
+        //presenter = new HomePresenter(this, new GoogleMapImpl(getActivity(), this));
         presenter.init();
+
+        if (location != null) {
+            presenter.showLocation(location);
+        }
 
         return view;
     }
@@ -72,10 +79,11 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     }
 
     public void showLocation(Location location) {
-//        if (googleMap != null) {
-//            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
-//            googleMap.moveCamera(cameraUpdate);
-//        }
+
+        this.location = location;
+        if (presenter != null) {
+            presenter.showLocation(location);
+        }
     }
 
     public void enableLocationPicker() {
@@ -113,7 +121,9 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     @Override
     public void onMapReady() {
-
+        if (this.location != null) {
+            presenter.showLocation(this.location);
+        }
     }
 
     @Override

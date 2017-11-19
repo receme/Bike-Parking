@@ -1,9 +1,11 @@
 package com.sunrider.bikeparking.services.googlemap;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -65,6 +67,11 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     }
 
     @Override
+    public boolean isReady() {
+        return googleMap != null;
+    }
+
+    @Override
     public void loadMap() {
 
         GooglePlayServiceUtils.PlayServiceStatus playServiceStatus = GooglePlayServiceUtils.checkPlayServices(activity);
@@ -120,6 +127,15 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
 
     @Override
     public void addMarkers(List<BikeUtilityLocation> markers) {
+
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void showLocation(Location location) {
+
+        googleMap.setMyLocationEnabled(true);
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
 
     }
 }

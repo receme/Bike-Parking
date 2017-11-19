@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -38,7 +39,7 @@ import com.sunrider.bikeparking.utils.AppUtilMethods;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener{
+public class MainActivity extends BaseActivity implements MainView, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -268,7 +269,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
-                Fragment fragment = AppFragmentManager.getFragment(MainActivity.this,NavigationDrawerManager.navItemIndex);
+                Fragment fragment = AppFragmentManager.getFragment(MainActivity.this);
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -289,11 +290,21 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     @Override
     public void showLocationOnMap(Location location) {
 
+        HomeFragment homeFragment = (HomeFragment) AppFragmentManager.getFragment(this, NavigationDrawerManager.TAG_HOME);
+        if(homeFragment != null){
+            homeFragment.showLocation(location);
+        }
     }
 
     @Override
     public void saveAsLastKnownLocation(Location location) {
 
+    }
+
+    @Override
+    public void openDeviceSettingsPage() {
+
+        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
     }
 
     @Override
