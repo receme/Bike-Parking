@@ -133,7 +133,6 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     @SuppressLint("MissingPermission")
     @Override
     public void showLocation(Location location) {
-
         googleMap.setMyLocationEnabled(true);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
 

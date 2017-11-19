@@ -1,7 +1,6 @@
 package com.sunrider.bikeparking.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -76,6 +75,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                 LocationServiceImpl.getInstance(this),
                 new DexterPermissionChecker(this));
         presenter.init();
+        presenter.checkLocationPermission();
 
         if (savedInstanceState == null) {
             navigationDrawerManager.setNavItemIndex(0);
@@ -85,24 +85,17 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
-//        if (isMapLoaded) {
-//            initializeLocationUpdates();
-//        }
+        if(presenter.getLocation() == null){
+            presenter.checkLocationPermission();
+        }
+        else{
+            presenter.onLocationFound(presenter.getLocation());
+        }
+
     }
-
-//    private void initializeLocationUpdates() {
-//
-//        locationServiceImpl = LocationServiceImpl.getInstance(this);
-//
-//        if (checkPermissions()) {
-//            locationServiceImpl.startLocationUpdates();
-//        } else if (!checkPermissions()) {
-//            requestPermissions();
-//        }
-//    }
 
     @Override
     protected void onStop() {
@@ -304,7 +297,9 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     @Override
     public void openDeviceSettingsPage() {
 
-        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -353,23 +348,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             fab.show();
         else
             fab.hide();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // Check for the integer request code originally supplied to startResolutionForResult().
-            case LocationServiceImpl.REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    //For RESULT_OK: User agreed to make required location settings changes.
-                    //Nothing to do. startLocationupdates() gets called in onResume again.
-                    case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
-
-                        break;
-                }
-                break;
-        }
     }
 
 //    @Override

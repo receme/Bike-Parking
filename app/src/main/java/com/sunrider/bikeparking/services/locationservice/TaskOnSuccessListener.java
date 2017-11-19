@@ -11,14 +11,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class TaskOnSuccessListener implements OnSuccessListener<LocationSettingsResponse> {
 
-    private int locationUpdateCount;
     private final FusedLocationProviderClient mFusedLocationClient;
     private final LocationRequest mLocationRequest;
     private final LocationCallback mLocationCallback;
 
-    public TaskOnSuccessListener(int locationUpdateCount, FusedLocationProviderClient mFusedLocationClient,
+    public TaskOnSuccessListener(FusedLocationProviderClient mFusedLocationClient,
                                  LocationRequest mLocationRequest, LocationCallback mLocationCallback) {
-        this.locationUpdateCount = locationUpdateCount;
         this.mFusedLocationClient = mFusedLocationClient;
         this.mLocationRequest = mLocationRequest;
         this.mLocationCallback = mLocationCallback;
@@ -28,7 +26,6 @@ public class TaskOnSuccessListener implements OnSuccessListener<LocationSettings
     @Override
     @SuppressWarnings("MissingPermission")
     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-        locationUpdateCount = 0;
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
     }

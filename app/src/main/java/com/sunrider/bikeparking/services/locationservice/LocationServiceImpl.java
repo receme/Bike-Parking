@@ -102,8 +102,9 @@ public class LocationServiceImpl implements LocationService {
         }
 
         // Begin by checking if the device has the necessary location settings.
+        locationUpdateCount = 0;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(activity, new TaskOnSuccessListener(locationUpdateCount, mFusedLocationClient, mLocationRequest, mLocationCallback))
+                .addOnSuccessListener(activity, new TaskOnSuccessListener(mFusedLocationClient, mLocationRequest, mLocationCallback))
                 .addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
 
     }

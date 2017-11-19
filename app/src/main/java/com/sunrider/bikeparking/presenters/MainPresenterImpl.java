@@ -20,6 +20,8 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
     private final PermissionCheckerService permissionCheckerService;
     private final MainPresenter self;
 
+    private Location location;
+
     public MainPresenterImpl(MainView view, FirebaseService firebase, DatabaseService dbService, LocationService locationService, PermissionCheckerService permissionCheckerService) {
         this.view = view;
         this.firebase = firebase;
@@ -36,6 +38,10 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
         view.init();
         view.setupNavigationDrawer();
         view.defineClickListener();
+
+    }
+
+    public void checkLocationPermission() {
 
         permissionCheckerService.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, new PermissionCheckerService.Listener() {
             @Override
@@ -63,13 +69,14 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
                 });
             }
         });
-
     }
 
     @Override
     public void onLocationFound(Location location) {
 
         if (location != null) {
+            this.location = location;
+
             view.showLocationOnMap(location);
             view.saveAsLastKnownLocation(location);
         }
@@ -84,5 +91,9 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
     @Override
     public void onLocationResolutionFailed() {
 
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }
