@@ -2,14 +2,17 @@ package com.sunrider.bikeparking.services.locationservice;
 
 
 import android.os.Looper;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
-public class TaskOnSuccessListener implements OnSuccessListener<LocationSettingsResponse> {
+public class TaskOnSuccessListener implements OnCompleteListener<LocationSettingsResponse> {
 
     private final FusedLocationProviderClient mFusedLocationClient;
     private final LocationRequest mLocationRequest;
@@ -23,9 +26,9 @@ public class TaskOnSuccessListener implements OnSuccessListener<LocationSettings
 
     }
 
-    @Override
     @SuppressWarnings("MissingPermission")
-    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+    @Override
+    public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
     }

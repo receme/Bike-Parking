@@ -124,8 +124,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
-
-    @SuppressWarnings("MissingPermission")
+    
     @Override
     public void startLocationUpdates() {
 
@@ -136,14 +135,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
 
         Task<LocationSettingsResponse> result = mSettingsClient.checkLocationSettings(mLocationSettingsRequest);
         result.addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
-        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
-            @Override
-            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
-
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                        mLocationCallback, Looper.myLooper());
-            }
-        });
+        result.addOnCompleteListener(new TaskOnSuccessListener(mFusedLocationClient,mLocationRequest,mLocationCallback));
     }
 
     @Override
