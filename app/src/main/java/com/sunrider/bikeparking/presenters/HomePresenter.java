@@ -26,7 +26,12 @@ public class HomePresenter extends BasePresenter {
 
         if(mapService.isReady()){
             mapService.showLocation(location);
+            setLocationBtnEnabled(true);
         }
 
+    }
+
+    public void setLocationBtnEnabled(boolean isLocationPermissionGiven) {
+        mapService.setLocationBtnEnabled(isLocationPermissionGiven);
     }
 }

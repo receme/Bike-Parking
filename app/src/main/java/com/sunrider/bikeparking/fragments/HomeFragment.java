@@ -1,5 +1,6 @@
 package com.sunrider.bikeparking.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -16,6 +17,7 @@ import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.presenters.HomePresenter;
 import com.sunrider.bikeparking.services.MapService;
 import com.sunrider.bikeparking.services.googlemap.GoogleMapImpl;
+import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 
 import butterknife.ButterKnife;
@@ -83,6 +85,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         this.location = location;
         if (presenter != null) {
             presenter.showLocation(location);
+
         }
     }
 
@@ -134,6 +137,10 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     @Override
     public void onMapClicked() {
 
+    }
+
+    public void setLocationBtnEnabled() {
+        presenter.setLocationBtnEnabled(AppUtilMethods.isPermissionGiven(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION));
     }
 
     public interface OnFragmentInteractionListener {

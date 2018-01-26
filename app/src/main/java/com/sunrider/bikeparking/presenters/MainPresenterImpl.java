@@ -10,6 +10,7 @@ import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.services.LocationService;
 import com.sunrider.bikeparking.services.PermissionCheckerService;
 import com.sunrider.bikeparking.services.firebase.FirebaseService;
+import com.sunrider.bikeparking.utils.AppUtilMethods;
 
 public class MainPresenterImpl implements MainPresenter, LocationService.LocationListener {
 
@@ -43,10 +44,10 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
 
     public void checkLocationPermission() {
 
-        permissionCheckerService.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, new PermissionCheckerService.Listener() {
+        permissionCheckerService.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, new PermissionCheckerService.Listener() {
             @Override
             public void onPermissionGranted() {
-                locationService.startLocationUpdates();
+                startUpdatingLocation();
             }
 
             @Override
@@ -69,6 +70,12 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
                 });
             }
         });
+    }
+
+    public void startUpdatingLocation() {
+        view.setLocationBtnEnabled();
+        locationService.startLocationUpdates();
+        locationService.startListeningGPSStatus();
     }
 
     @Override

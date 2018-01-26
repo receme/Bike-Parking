@@ -47,6 +47,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
 
         UiSettings settings = googleMap.getUiSettings();
         settings.setCompassEnabled(true);
+        settings.setMyLocationButtonEnabled(true);
         settings.setZoomControlsEnabled(false);
         settings.setZoomGesturesEnabled(true);
         settings.setMapToolbarEnabled(false);
@@ -130,11 +131,20 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
 
     }
 
-    @SuppressLint("MissingPermission")
+
     @Override
     public void showLocation(Location location) {
-        googleMap.setMyLocationEnabled(true);
+
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
 
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void setLocationBtnEnabled(boolean isLocationPermissionGiven) {
+
+        if(isLocationPermissionGiven){
+            googleMap.setMyLocationEnabled(true);
+        }
     }
 }

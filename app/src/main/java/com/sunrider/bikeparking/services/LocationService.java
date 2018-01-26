@@ -10,6 +10,8 @@ public interface LocationService {
 
     void stopLocationUpdates();
 
+    void startListeningGPSStatus();
+
 
     interface LocationListener {
         void onLocationFound(Location location);

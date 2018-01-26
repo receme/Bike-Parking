@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,5 +126,10 @@ public class AppUtilMethods {
         }
 
         return inputStr.matches("\\b[A-Z]\\b");
+    }
+
+    public static boolean isPermissionGiven(Context context,String permission){
+        int result = ContextCompat.checkSelfPermission(context, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 }

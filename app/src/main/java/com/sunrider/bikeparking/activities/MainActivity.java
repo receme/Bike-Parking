@@ -75,7 +75,13 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                 LocationServiceImpl.getInstance(this),
                 new DexterPermissionChecker(this));
         presenter.init();
-        presenter.checkLocationPermission();
+
+//        if (AppUtilMethods.isPermissionGiven(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+//            presenter.startUpdatingLocation();
+//        } else {
+            presenter.checkLocationPermission();
+        //}
+
 
         if (savedInstanceState == null) {
             navigationDrawerManager.setNavItemIndex(0);
@@ -88,10 +94,9 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     protected void onStart() {
         super.onStart();
 
-        if(presenter.getLocation() == null){
+        if (presenter.getLocation() == null) {
             presenter.checkLocationPermission();
-        }
-        else{
+        } else {
             presenter.onLocationFound(presenter.getLocation());
         }
 
@@ -284,7 +289,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     public void showLocationOnMap(Location location) {
 
         HomeFragment homeFragment = (HomeFragment) AppFragmentManager.getFragment(this, NavigationDrawerManager.TAG_HOME);
-        if(homeFragment != null){
+        if (homeFragment != null) {
             homeFragment.showLocation(location);
         }
     }
@@ -300,6 +305,14 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void setLocationBtnEnabled() {
+        HomeFragment homeFragment = (HomeFragment) AppFragmentManager.getFragment(this, NavigationDrawerManager.TAG_HOME);
+        if (homeFragment != null) {
+            homeFragment.setLocationBtnEnabled();
+        }
     }
 
     @Override

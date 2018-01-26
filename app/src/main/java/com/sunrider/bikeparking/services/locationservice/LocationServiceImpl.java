@@ -1,10 +1,20 @@
 package com.sunrider.bikeparking.services.locationservice;
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -12,17 +22,21 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.sunrider.bikeparking.services.LocationService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationServiceImpl implements LocationService {
+public class LocationServiceImpl implements LocationService, LocationListener {
 
     private static final String TAG = LocationServiceImpl.class.getSimpleName();
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     public static final int REQUEST_CHECK_SETTINGS = 0x1;
 
@@ -31,6 +45,7 @@ public class LocationServiceImpl implements LocationService {
     private LocationRequest mLocationRequest;
     private LocationSettingsRequest mLocationSettingsRequest;
     private Location mCurrentLocation;
+    private LocationManager mLocationManager;
 
     private Activity activity;
 
@@ -44,13 +59,14 @@ public class LocationServiceImpl implements LocationService {
             super.onLocationResult(locationResult);
 
             mCurrentLocation = locationResult.getLastLocation();
+
             if (listener != null) {
                 listener.onLocationFound(mCurrentLocation);
-                locationUpdateCount++;
+                //locationUpdateCount++;
 
-                if (locationUpdateCount > 2) {
-                    stopLocationUpdates();
-                }
+                //if (locationUpdateCount > 2) {
+                stopLocationUpdates();
+                //}
             }
 
             System.out.println(mCurrentLocation.getLatitude() + " , " + mCurrentLocation.getLongitude());
@@ -58,6 +74,7 @@ public class LocationServiceImpl implements LocationService {
     };
 
     public static LocationServiceImpl getInstance(Activity activity) {
+
         if (instance == null) {
             instance = new LocationServiceImpl(activity);
         }
@@ -68,8 +85,18 @@ public class LocationServiceImpl implements LocationService {
         this.activity = activity;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mSettingsClient = LocationServices.getSettingsClient(activity);
+
         createLocationRequest();
         buildLocationSettingsRequest();
+    }
+
+    @Override
+    public void startListeningGPSStatus() {
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
     }
 
 
@@ -84,6 +111,7 @@ public class LocationServiceImpl implements LocationService {
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
     }
 
     private void buildLocationSettingsRequest() {
@@ -103,16 +131,33 @@ public class LocationServiceImpl implements LocationService {
 
         // Begin by checking if the device has the necessary location settings.
         locationUpdateCount = 0;
-        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(activity, new TaskOnSuccessListener(mFusedLocationClient, mLocationRequest, mLocationCallback))
-                .addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
+//        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+//                .addOnSuccessListener(activity, new TaskOnSuccessListener(mFusedLocationClient, mLocationRequest, mLocationCallback))
+//                .addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
+
+
+        Task<LocationSettingsResponse> result = mSettingsClient.checkLocationSettings(mLocationSettingsRequest);
+        result.addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                        mLocationCallback, Looper.myLooper());
+
+
+            }
+        });
+
 
     }
 
     @Override
     public void stopLocationUpdates() {
         try {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            if (mFusedLocationClient != null) {
+                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,4 +211,25 @@ public class LocationServiceImpl implements LocationService {
     }
 
 
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+        System.out.println("GPS status changed");
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+        System.out.println("GPS enabled");
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        System.out.println("GPS disabled");
+        stopLocationUpdates();
+    }
 }

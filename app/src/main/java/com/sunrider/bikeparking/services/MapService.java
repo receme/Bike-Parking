@@ -11,6 +11,8 @@ public interface MapService<T> {
     void addMarkers(List<T> markers);
     void showLocation(Location location);
 
+    void setLocationBtnEnabled(boolean isLocationPermissionGiven);
+
 
     interface Callback<T> {
         void onMapReady();
