@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 
 public class HomeFragment extends Fragment implements HomeView, MapService.Callback<BikeUtilityLocation> {
 
-
     private HomePresenter presenter;
 
     private OnFragmentInteractionListener mListener;

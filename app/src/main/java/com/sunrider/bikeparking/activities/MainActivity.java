@@ -1,21 +1,17 @@
 package com.sunrider.bikeparking.activities;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,7 +57,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     private boolean addingNewLocationEntry = false;
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +70,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                 LocationServiceImpl.getInstance(this),
                 new DexterPermissionChecker(this));
         presenter.init();
-
-//        if (AppUtilMethods.isPermissionGiven(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-//            presenter.startUpdatingLocation();
-//        } else {
-
-        //}
-
+        presenter.checkLocationPermission();
 
         if (savedInstanceState == null) {
             navigationDrawerManager.setNavItemIndex(0);
@@ -91,62 +80,11 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        presenter.checkLocationPermission();
-//        if (presenter.getLocation() == null) {
-//            presenter.checkLocationPermission();
-//        } else {
-//            presenter.onLocationFound(presenter.getLocation());
-//        }
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
         presenter.stopLocationUpdates();
-
     }
-
-    public boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermissions() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
-
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
-            AppUtilMethods.showSnackbar(this, R.string.permission_rationale,
-                    android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMISSIONS_REQUEST_CODE);
-                        }
-                    });
-
-        } else {
-            Log.i(TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
 
     @Override
     public int getLayoutResourceId() {
@@ -163,7 +101,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 
         mHandler = new Handler();
         navHeader = navigationView.getHeaderView(0);
-        imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
+        imgNavHeaderBg = navHeader.findViewById(R.id.img_header_bg);
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
 
@@ -227,8 +165,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 
                     final ParkingLocationEntity location = homeFragment.getParkingLocation();
                     AppUtilMethods.showToast(MainActivity.this, location.getLat() + " - " + location.getLng());
-
-                    //progressBar.setVisibility(View.VISIBLE);
 
                     Runnable runnable = new Runnable() {
                         @Override
@@ -363,67 +299,9 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             fab.hide();
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        Log.i(TAG, "onRequestPermissionResult");
-//        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-//            if (grantResults.length <= 0) {
-//                Log.i(TAG, "User interaction was cancelled.");
-//            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Log.i(TAG, "Permission granted, updates requested, starting location updates");
-//                //locationServiceImpl.startLocationUpdates();
-//            } else {
-//
-//                AppUtilMethods.showSnackbar(this, R.string.permission_denied_explanation,
-//                        R.string.nav_settings, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                // Build intent that displays the App settings screen.
-//                                Intent intent = new Intent();
-//                                intent.setAction(
-//                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                                Uri uri = Uri.fromParts("package",
-//                                        BuildConfig.APPLICATION_ID, null);
-//                                intent.setData(uri);
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                startActivity(intent);
-//                            }
-//                        });
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void onLocationFound(Location location) {
-//        if (location != null) {
-//            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
-//            if (homeFragment != null) {
-//
-//                homeFragment.showLocation(location);
-//
-//                if (locationServiceImpl != null) {
-//                    locationServiceImpl.stopLocationUpdates();
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    @Override
-//    public void onLocationResolutionSuccess() {
-//
-//    }
-//
-//    @Override
-//    public void onLocationResolutionFailed() {
-//
-//    }
-
     @Override
     public void onMapLoadingComplete() {
         isMapLoaded = true;
-        //initializeLocationUpdates();
     }
 
     @Override

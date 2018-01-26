@@ -106,7 +106,6 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
             locationService.stopListeningGPSStatus();
             locationService.disable();
 
-            locationService = null;
         }
     }
 

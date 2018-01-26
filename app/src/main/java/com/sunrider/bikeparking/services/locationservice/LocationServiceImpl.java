@@ -49,7 +49,6 @@ public class LocationServiceImpl implements LocationService, LocationListener {
 
     private static LocationServiceImpl instance;
     private LocationListener listener;
-    int locationUpdateCount;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -60,11 +59,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
 
             if (listener != null) {
                 listener.onLocationFound(mCurrentLocation);
-                //locationUpdateCount++;
-
-                //if (locationUpdateCount > 2) {
                 stopLocationUpdates();
-                //}
             }
 
             System.out.println(mCurrentLocation.getLatitude() + " , " + mCurrentLocation.getLongitude());
@@ -139,9 +134,6 @@ public class LocationServiceImpl implements LocationService, LocationListener {
             return;
         }
 
-        // Begin by checking if the device has the necessary location settings.
-        locationUpdateCount = 0;
-
         Task<LocationSettingsResponse> result = mSettingsClient.checkLocationSettings(mLocationSettingsRequest);
         result.addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
@@ -152,8 +144,6 @@ public class LocationServiceImpl implements LocationService, LocationListener {
                         mLocationCallback, Looper.myLooper());
             }
         });
-
-
     }
 
     @Override
