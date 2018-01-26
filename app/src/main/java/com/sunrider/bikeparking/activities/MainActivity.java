@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 //        if (AppUtilMethods.isPermissionGiven(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 //            presenter.startUpdatingLocation();
 //        } else {
-            presenter.checkLocationPermission();
+
         //}
 
 
@@ -94,11 +94,12 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     protected void onStart() {
         super.onStart();
 
-        if (presenter.getLocation() == null) {
-            presenter.checkLocationPermission();
-        } else {
-            presenter.onLocationFound(presenter.getLocation());
-        }
+        presenter.checkLocationPermission();
+//        if (presenter.getLocation() == null) {
+//            presenter.checkLocationPermission();
+//        } else {
+//            presenter.onLocationFound(presenter.getLocation());
+//        }
 
     }
 
@@ -106,9 +107,8 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     protected void onStop() {
         super.onStop();
 
-//        if (locationServiceImpl != null) {
-//            locationServiceImpl.stopLocationUpdates();
-//        }
+        presenter.stopLocationUpdates();
+
     }
 
     public boolean checkPermissions() {

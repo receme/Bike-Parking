@@ -38,6 +38,7 @@ public class TaskOnFailureListener implements OnFailureListener {
 
                     listener.onLocationResolutionSuccess();
                 } catch (IntentSender.SendIntentException sie) {
+                    sie.printStackTrace();
                     //Log.i(TAG, "PendingIntent unable to execute request.");
                     listener.onLocationResolutionFailed();
                 }

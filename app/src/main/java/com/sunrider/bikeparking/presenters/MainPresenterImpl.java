@@ -10,18 +10,18 @@ import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.services.LocationService;
 import com.sunrider.bikeparking.services.PermissionCheckerService;
 import com.sunrider.bikeparking.services.firebase.FirebaseService;
-import com.sunrider.bikeparking.utils.AppUtilMethods;
 
 public class MainPresenterImpl implements MainPresenter, LocationService.LocationListener {
 
     private final MainView view;
     private final FirebaseService firebase;
     private final DatabaseService dbService;
-    private final LocationService locationService;
     private final PermissionCheckerService permissionCheckerService;
     private final MainPresenter self;
 
-    private Location location;
+    private LocationService locationService;
+
+//    private Location location;
 
     public MainPresenterImpl(MainView view, FirebaseService firebase, DatabaseService dbService, LocationService locationService, PermissionCheckerService permissionCheckerService) {
         this.view = view;
@@ -82,8 +82,6 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
     public void onLocationFound(Location location) {
 
         if (location != null) {
-            this.location = location;
-
             view.showLocationOnMap(location);
             view.saveAsLastKnownLocation(location);
         }
@@ -97,10 +95,19 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
 
     @Override
     public void onLocationResolutionFailed() {
-
+        checkLocationPermission();
     }
 
-    public Location getLocation() {
-        return location;
+    public void stopLocationUpdates(){
+
+        if(locationService!=null){
+
+            locationService.stopLocationUpdates();
+            locationService.stopListeningGPSStatus();
+            locationService.disable();
+
+            locationService = null;
+        }
     }
+
 }

@@ -11,6 +11,9 @@ public interface LocationService {
     void stopLocationUpdates();
 
     void startListeningGPSStatus();
+    void stopListeningGPSStatus();
+
+    void disable();
 
 
     interface LocationListener {
