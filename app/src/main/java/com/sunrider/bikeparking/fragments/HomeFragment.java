@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
@@ -20,9 +21,13 @@ import com.sunrider.bikeparking.services.googlemap.GoogleMapImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeFragment extends Fragment implements HomeView, MapService.Callback<BikeUtilityLocation> {
+
+    @BindView(R.id.locationPickerMarker)
+    ImageView locationPickerMarker;
 
     private HomePresenter presenter;
 
@@ -89,36 +94,19 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     }
 
     public void enableLocationPicker() {
-
-//        if (googleMap != null) {
-//            locationPickerMarker = googleMap.addMarker(new MarkerOptions()
-//                    .position(googleMap.getCameraPosition().target)
-//                    .title("Pick a location").draggable(true));
-//
-//        }
+        locationPickerMarker.setVisibility(View.VISIBLE);
+        presenter.enableLocationPicker();
     }
 
     public void disableLocationPicker() {
 
-//        if (locationPickerMarker != null) {
-//            locationPickerMarker.remove();
-//        }
-
+        locationPickerMarker.setVisibility(View.GONE);
+        presenter.disableLocationPicker();
     }
 
     public ParkingLocationEntity getParkingLocation() {
-
-//        if (locationPickerMarker != null) {
-//
-//            LatLng position = locationPickerMarker.getPosition();
-//            ParkingLocationEntity parkingLocation = new ParkingLocationEntity();
-//            parkingLocation.setLat(position.latitude);
-//            parkingLocation.setLng(position.longitude);
-//
-//            return parkingLocation;
-//        }
-
-        return null;
+        ParkingLocationEntity position =  presenter.getSelectedLocation();
+        return position;
     }
 
     @Override

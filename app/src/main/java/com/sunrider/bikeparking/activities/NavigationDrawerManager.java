@@ -10,6 +10,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.sunrider.bikeparking.R;
+import com.sunrider.bikeparking.fragments.AboutFragment;
+import com.sunrider.bikeparking.fragments.ContributionFragment;
+import com.sunrider.bikeparking.fragments.HomeFragment;
+import com.sunrider.bikeparking.fragments.InstructionFragment;
+import com.sunrider.bikeparking.fragments.PrivacyPolicyFragment;
+import com.sunrider.bikeparking.fragments.SettingsFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
 
 public class NavigationDrawerManager {
@@ -22,12 +28,12 @@ public class NavigationDrawerManager {
 
     public static int navItemIndex = 0;
 
-    public static final String TAG_HOME = "home";
-    public static final String TAG_CONTRIBUTIONS = "contributions";
-    public static final String TAG_SETTINGS = "settings";
-    public static final String TAG_INSTRUCTIONS = "instructions";
-    public static final String TAG_PRIVACY_POLICY = "privacy_policy";
-    public static final String TAG_ABOUT = "about";
+    public static final String TAG_HOME = HomeFragment.class.getSimpleName();
+    public static final String TAG_CONTRIBUTIONS = ContributionFragment.class.getSimpleName();
+    public static final String TAG_SETTINGS = SettingsFragment.class.getSimpleName();
+    public static final String TAG_INSTRUCTIONS = InstructionFragment.class.getSimpleName();
+    public static final String TAG_PRIVACY_POLICY = PrivacyPolicyFragment.class.getSimpleName();
+    public static final String TAG_ABOUT = AboutFragment.class.getSimpleName();
     public static String CURRENT_TAG = TAG_HOME;
 
     private String[] activityTitles;

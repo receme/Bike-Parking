@@ -1,6 +1,7 @@
 package com.sunrider.bikeparking.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sunrider.bikeparking.R;
@@ -156,18 +158,26 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             @Override
             public void onClick(View view) {
 
-                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.class.getSimpleName());
+                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
 
                 if (!addingNewLocationEntry) {
                     fab.setImageResource(R.mipmap.ic_action_check);
+                    fab.setBackgroundColor(Color.YELLOW);
                     addingNewLocationEntry = true;
 
                     homeFragment.enableLocationPicker();
                 } else {
                     fab.setImageResource(R.mipmap.ic_action_add);
+                    fab.setBackgroundColor(Color.CYAN);
                     addingNewLocationEntry = false;
 
                     final ParkingLocationEntity location = homeFragment.getParkingLocation();
+
+                    if(location == null){
+                        AppUtilMethods.showToast(MainActivity.this,"Location cannot be determined. Please try again.");
+                        return;
+                    }
+
                     AppUtilMethods.showToast(MainActivity.this, location.getLat() + " - " + location.getLng());
 
                     Runnable runnable = new Runnable() {
@@ -176,6 +186,8 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 
                             final String address = LocationServiceImpl.getInstance(MainActivity.this).getAddress(location.getLat(), location.getLng());
                             location.setAddress(address);
+                            System.out.println("*******ADDRESS: "+address);
+                            AppUtilMethods.showToast(MainActivity.this,address);
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -188,12 +200,10 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                                     startActivity(intent);
                                 }
                             });
-
                         }
                     };
 
                     new Thread(runnable).start();
-
                 }
             }
         });
@@ -301,9 +311,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 
                 }
             });
-
-
-
             return true;
         }
 
@@ -331,7 +338,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     public void onLogout() {
 
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra("WaitingNeeded",false);
+        intent.putExtra("WaitingNeeded", false);
         startActivity(intent);
 
         finish();

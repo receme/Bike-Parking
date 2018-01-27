@@ -3,6 +3,8 @@ package com.sunrider.bikeparking.services;
 
 import android.location.Location;
 
+import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+
 import java.util.List;
 
 public interface MapService<T> {
@@ -12,6 +14,10 @@ public interface MapService<T> {
     void showLocation(Location location);
 
     void setLocationBtnEnabled(boolean isLocationPermissionGiven);
+
+    void enableLocationPicker();
+    void disableLocationPicker();
+    ParkingLocationEntity getSelectedLocation();
 
 
     interface Callback<T> {

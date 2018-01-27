@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.sunrider.bikeparking.R;
+import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
 import com.sunrider.bikeparking.interfaces.BaseView;
 import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.services.MapService;
@@ -33,6 +35,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     private Fragment fragment;
     private Callback callback;
     private List<BikeUtilityLocation> listOfBikeUtilityLocations;
+
 
     public GoogleMapImpl(Activity activity, @NonNull Fragment fragment) {
 
@@ -146,5 +149,46 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
         if (isLocationPermissionGiven) {
             googleMap.setMyLocationEnabled(true);
         }
+    }
+
+    @Override
+    public void enableLocationPicker() {
+        if (googleMap != null) {
+
+            LatLng midLatLng = googleMap.getCameraPosition().target;
+            Toast.makeText(activity,midLatLng.latitude+" , "+midLatLng.longitude,Toast.LENGTH_SHORT).show();
+
+            googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                @Override
+                public void onCameraIdle() {
+                    LatLng midLatLng = googleMap.getCameraPosition().target;
+                    Toast.makeText(activity,midLatLng.latitude+" , "+midLatLng.longitude,Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+    }
+
+    @Override
+    public void disableLocationPicker() {
+        if (googleMap != null) {
+            googleMap.setOnCameraIdleListener(null);
+        }
+    }
+
+    @Override
+    public ParkingLocationEntity getSelectedLocation() {
+
+        if(googleMap!=null){
+            LatLng midLatLng = googleMap.getCameraPosition().target;
+            ParkingLocationEntity parkingLocation = new ParkingLocationEntity();
+            parkingLocation.setLat(midLatLng.latitude);
+            parkingLocation.setLng(midLatLng.longitude);
+
+            return parkingLocation;
+        }
+
+        return null;
     }
 }
