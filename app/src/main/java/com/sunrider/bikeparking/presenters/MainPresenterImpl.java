@@ -98,9 +98,9 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
         checkLocationPermission();
     }
 
-    public void stopLocationUpdates(){
+    public void stopLocationUpdates() {
 
-        if(locationService!=null){
+        if (locationService != null) {
 
             locationService.stopLocationUpdates();
             locationService.stopListeningGPSStatus();

@@ -11,8 +11,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -23,7 +21,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.sunrider.bikeparking.services.LocationService;
 
@@ -75,7 +72,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         instance = null;
     }
 
@@ -99,7 +96,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
 
     @Override
     public void stopListeningGPSStatus() {
-        if(mLocationManager!=null){
+        if (mLocationManager != null) {
             mLocationManager.removeUpdates(this);
         }
     }
@@ -124,7 +121,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
-    
+
     @Override
     public void startLocationUpdates() {
 
@@ -135,7 +132,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
 
         Task<LocationSettingsResponse> result = mSettingsClient.checkLocationSettings(mLocationSettingsRequest);
         result.addOnFailureListener(new TaskOnFailureListener(activity, listener, REQUEST_CHECK_SETTINGS));
-        result.addOnCompleteListener(new TaskOnSuccessListener(mFusedLocationClient,mLocationRequest,mLocationCallback));
+        result.addOnCompleteListener(new TaskOnSuccessListener(mFusedLocationClient, mLocationRequest, mLocationCallback));
     }
 
     @Override

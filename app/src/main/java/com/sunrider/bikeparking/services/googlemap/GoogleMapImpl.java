@@ -77,12 +77,12 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
 
         GooglePlayServiceUtils.PlayServiceStatus playServiceStatus = GooglePlayServiceUtils.checkPlayServices(activity);
 
-        if(playServiceStatus.equals(GooglePlayServiceUtils.PlayServiceStatus.DEVICE_NOT_SUPPORTED)){
-            AppUtilMethods.showAlert(activity,"",activity.getResources().getString(R.string.device_not_supported),"Ok",null,null);
+        if (playServiceStatus.equals(GooglePlayServiceUtils.PlayServiceStatus.DEVICE_NOT_SUPPORTED)) {
+            AppUtilMethods.showAlert(activity, "", activity.getResources().getString(R.string.device_not_supported), "Ok", null, null);
             return;
         }
 
-        if(playServiceStatus.equals(GooglePlayServiceUtils.PlayServiceStatus.NOT_AVAILABLE)){
+        if (playServiceStatus.equals(GooglePlayServiceUtils.PlayServiceStatus.NOT_AVAILABLE)) {
             AppUtilMethods.showAlert(activity, "", activity.getResources().getString(R.string.install_play_service), "Ok", "Cancel", new BaseView.AlertViewAction() {
                 @Override
                 public void onPositiveBtnClicked() {
@@ -117,7 +117,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
             SupportMapFragment mapFragment = (SupportMapFragment) fragment.getChildFragmentManager().findFragmentById(R.id.map);
 
             if (mapFragment == null) {
-                AppUtilMethods.showAlert(activity,"",activity.getResources().getString(R.string.map_load_fail),"Ok",null,null);
+                AppUtilMethods.showAlert(activity, "", activity.getResources().getString(R.string.map_load_fail), "Ok", null, null);
                 return;
             }
 
@@ -135,7 +135,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     @Override
     public void showLocation(Location location) {
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 
     }
 
@@ -143,7 +143,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     @Override
     public void setLocationBtnEnabled(boolean isLocationPermissionGiven) {
 
-        if(isLocationPermissionGiven){
+        if (isLocationPermissionGiven) {
             googleMap.setMyLocationEnabled(true);
         }
     }
