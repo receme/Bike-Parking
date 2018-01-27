@@ -1,12 +1,15 @@
 package com.sunrider.bikeparking.services;
 
 
+import com.facebook.CallbackManager;
+
 public interface SocialAuthService {
 
-    void login(Callback callback);
+    void login();
+    CallbackManager getCallbackManager();
 
     interface Callback{
-        void onLoginSuccess(String authtoken);
-        void onLoginFailure();
+        void onFacebookLoginSuccess(String authtoken);
+        void onFacebookLoginFailure();
     }
 }

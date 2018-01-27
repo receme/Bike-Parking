@@ -17,7 +17,6 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity implements BaseView {
 
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @Override
@@ -25,7 +24,12 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
 
     }
 
