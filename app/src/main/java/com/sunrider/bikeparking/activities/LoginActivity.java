@@ -16,7 +16,7 @@ import com.sunrider.bikeparking.services.firebase.FirebaseAuthManager;
 
 import butterknife.BindView;
 
-public class LoginActivity extends BaseActivity implements SocialAuthService.Callback, FirebaseAuthManager.Callback{
+public class LoginActivity extends BaseActivity implements SocialAuthService.Callback, FirebaseAuthManager.Callback {
 
     @BindView(R.id.fbLoginBtn)
     Button fbLoginBtn;
@@ -29,10 +29,17 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
         super.onCreate(savedInstanceState);
 
         firebaseAuthManager = new FirebaseAuthManager(this);
-        facebookAuthManager = new FacebookAuthManager(this,this);
+        facebookAuthManager = new FacebookAuthManager(this, this);
         facebookAuthManager.init();
 
-        new Handler().postDelayed(new Runnable(){
+        boolean waitingNeeded = getIntent().getBooleanExtra("WaitingNeeded",true);
+        int delayTime = 3000;
+
+        if(!waitingNeeded){
+            delayTime = 0;
+        }
+
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
@@ -40,7 +47,7 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
                 updateUI(currentUser);
 
             }
-        }, 3000);
+        }, delayTime);
 
         fbLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,10 +61,9 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
 
     private void updateUI(FirebaseUser currentUser) {
 
-        if(currentUser == null){
+        if (currentUser == null) {
             fbLoginBtn.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             showHomeScreen();
         }
     }
@@ -74,7 +80,7 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
 
     @Override
     public void onFacebookLoginSuccess(String authtoken) {
-        firebaseAuthManager.signinWithFacebookCredential(authtoken,this);
+        firebaseAuthManager.signinWithFacebookCredential(authtoken, this);
     }
 
     @Override
@@ -92,17 +98,17 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
         fbLoginBtn.setClickable(true);
     }
 
-    private void showHomeScreen(){
+    private void showHomeScreen() {
 
-        Intent intent = new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(facebookAuthManager!=null){
-            facebookAuthManager.getCallbackManager().onActivityResult(requestCode,resultCode,data);
+        if (facebookAuthManager != null) {
+            facebookAuthManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

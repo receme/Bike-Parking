@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sunrider.bikeparking.R;
@@ -27,6 +26,7 @@ import com.sunrider.bikeparking.fragments.HomeFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.presenters.MainPresenterImpl;
 import com.sunrider.bikeparking.services.dexter.DexterPermissionChecker;
+import com.sunrider.bikeparking.services.firebase.FirebaseAuthManager;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
 import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
@@ -34,7 +34,8 @@ import com.sunrider.bikeparking.utils.AppUtilMethods;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements MainView, HomeFragment.OnFragmentInteractionListener, FirebaseManager.FirebaseServiceListener {
+public class MainActivity extends BaseActivity implements MainView, HomeFragment.OnFragmentInteractionListener,
+        FirebaseManager.FirebaseServiceListener, FirebaseAuthManager.FirebaseAuthStateCallback {
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
@@ -50,6 +51,8 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
 
     private NavigationDrawerManager navigationDrawerManager;
     private MainPresenterImpl presenter;
+
+    private FirebaseAuthManager firebaseAuthManager;
 
     //state variables
     private boolean shouldLoadHomeFragOnBackPress = true;
@@ -82,7 +85,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         presenter.stopLocationUpdates();
     }
 
@@ -105,6 +107,8 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         navigationDrawerManager = new NavigationDrawerManager(this, navigationView, drawer, navHeader, imgNavHeaderBg);
 
 
+        firebaseAuthManager = new FirebaseAuthManager(this);
+        firebaseAuthManager.setAuthStateCallback(this);
     }
 
     @Override
@@ -141,7 +145,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             }
         };
 
-        drawer.setDrawerListener(actionBarDrawerToggle);
+        drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
@@ -285,7 +289,21 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
+
+            showAlert("", "Are you sure to logout?", "Yes", "No", new AlertViewAction() {
+                @Override
+                public void onPositiveBtnClicked() {
+                    firebaseAuthManager.signout();
+                }
+
+                @Override
+                public void onNegativeBtnClicked() {
+
+                }
+            });
+
+
+
             return true;
         }
 
@@ -307,5 +325,15 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     @Override
     public void onDatabaseError(String message) {
         AppUtilMethods.showToast(this, message);
+    }
+
+    @Override
+    public void onLogout() {
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra("WaitingNeeded",false);
+        startActivity(intent);
+
+        finish();
     }
 }
