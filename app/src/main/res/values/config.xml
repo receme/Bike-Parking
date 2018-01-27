@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="map_api_key">AIzaSyDqVkcMgVHueaJFXETJTi3zpjiQw0ENg_4</string>
+    <string name="map_api_key">AIzaSyCUb6FqGoIuRtyPuNv3xx5WoMWxS-Vjswc</string>
     <string name="facebook_app_id">1857320797892369</string>
     <string name="fb_login_protocol_scheme">fb1857320797892369</string>
 </resources>

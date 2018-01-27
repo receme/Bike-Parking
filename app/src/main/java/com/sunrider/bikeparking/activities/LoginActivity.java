@@ -30,6 +30,7 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
 
         firebaseAuthManager = new FirebaseAuthManager(this);
         facebookAuthManager = new FacebookAuthManager(this,this);
+        facebookAuthManager.init();
 
         new Handler().postDelayed(new Runnable(){
             @Override
@@ -44,8 +45,9 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
         fbLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                fbLoginBtn.setClickable(false);
                 facebookAuthManager.login();
+
             }
         });
     }
@@ -77,7 +79,7 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
 
     @Override
     public void onFacebookLoginFailure() {
-
+        fbLoginBtn.setClickable(true);
     }
 
     @Override
@@ -87,13 +89,14 @@ public class LoginActivity extends BaseActivity implements SocialAuthService.Cal
 
     @Override
     public void onFirebaseLoginFailure() {
-
+        fbLoginBtn.setClickable(true);
     }
 
     private void showHomeScreen(){
 
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
