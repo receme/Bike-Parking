@@ -12,6 +12,11 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         class="com.google.android.gms.maps.SupportMapFragment"/>
 
+    <include
+        android:id="@+id/selectedLocationView"
+        android:visibility="gone"
+        layout="@layout/view_selected_location" />
+
     <ImageView
         android:id="@+id/locationPickerMarker"
         android:visibility="gone"

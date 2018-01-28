@@ -4,6 +4,9 @@ package com.sunrider.bikeparking.services;
 import android.location.Location;
 
 public interface LocationService {
+
+    String getAddress(double lat, double lng);
+
     void setLocationListener(LocationListener listener);
 
     void startLocationUpdates();

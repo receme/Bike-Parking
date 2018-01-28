@@ -9,14 +9,19 @@ import java.util.List;
 
 public interface MapService<T> {
     boolean isReady();
+
     void loadMap();
+
     void addMarkers(List<T> markers);
+
     void showLocation(Location location);
 
     void setLocationBtnEnabled(boolean isLocationPermissionGiven);
 
     void enableLocationPicker();
+
     void disableLocationPicker();
+
     ParkingLocationEntity getSelectedLocation();
 
 
@@ -27,5 +32,6 @@ public interface MapService<T> {
 
         void onMapClicked();
 
+        void onLocationSelectedToAdd(double latitude, double longitude);
     }
 }

@@ -147,6 +147,7 @@ public class LocationServiceImpl implements LocationService, LocationListener {
         }
     }
 
+    @Override
     public String getAddress(double lat, double lng) {
 
         Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
@@ -165,24 +166,31 @@ public class LocationServiceImpl implements LocationService, LocationListener {
                 if (smallAddress != null) {
                     sb.append(smallAddress);
                 }
-                if (cityName != null) {
-                    sb.append(", ");
-                    sb.append(cityName);
-                }
-                if (stateName != null) {
-                    sb.append(", ");
-                    sb.append(stateName);
-                }
-                if (countryName != null) {
-                    sb.append(", ");
-                    sb.append(countryName);
-                }
-                if (postalCode != null) {
-                    sb.append(", ");
-                    sb.append(postalCode);
+                else{
+                    if(knownName!=null){
+                        sb.append(knownName);
+                        sb.append(", ");
+                    }
+                    if (cityName != null) {
+                        sb.append(cityName);
+                    }
+                    if (stateName != null) {
+                        sb.append(", ");
+                        sb.append(stateName);
+                    }
+                    if (countryName != null) {
+                        sb.append(", ");
+                        sb.append(countryName);
+                    }
+                    if (postalCode != null) {
+                        sb.append(", ");
+                        sb.append(postalCode);
+                    }
                 }
 
+
                 addressLine = sb.toString();
+
             }
 
 

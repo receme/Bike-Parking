@@ -9,7 +9,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
@@ -18,6 +21,7 @@ import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.presenters.HomePresenter;
 import com.sunrider.bikeparking.services.MapService;
 import com.sunrider.bikeparking.services.googlemap.GoogleMapImpl;
+import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 
@@ -28,6 +32,12 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     @BindView(R.id.locationPickerMarker)
     ImageView locationPickerMarker;
+    @BindView(R.id.selectedLocationView)
+    LinearLayout selectedLocationView;
+    @BindView(R.id.searchEdtxt)
+    EditText searchEdtxt;
+    @BindView(R.id.addressTv)
+    TextView addressTv;
 
     private HomePresenter presenter;
 
@@ -41,7 +51,9 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new HomePresenter(this, new GoogleMapImpl(getActivity(), this));
+        presenter = new HomePresenter(this,
+                new GoogleMapImpl(getActivity(), this),
+                LocationServiceImpl.getInstance(getActivity()));
 
         setHasOptionsMenu(true);
     }
@@ -95,17 +107,23 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     public void enableLocationPicker() {
         locationPickerMarker.setVisibility(View.VISIBLE);
+        selectedLocationView.setVisibility(View.VISIBLE);
+
         presenter.enableLocationPicker();
     }
 
     public void disableLocationPicker() {
-
         locationPickerMarker.setVisibility(View.GONE);
+        selectedLocationView.setVisibility(View.GONE);
+
+        searchEdtxt.setText("");
+        addressTv.setText("");
+
         presenter.disableLocationPicker();
     }
 
     public ParkingLocationEntity getParkingLocation() {
-        ParkingLocationEntity position =  presenter.getSelectedLocation();
+        ParkingLocationEntity position = presenter.getSelectedLocation();
         return position;
     }
 
@@ -126,8 +144,20 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     }
 
+    @Override
+    public void onLocationSelectedToAdd(double latitude, double longitude) {
+        presenter.onLocationSelectedToAdd(latitude, longitude);
+    }
+
     public void setLocationBtnEnabled() {
         presenter.setLocationBtnEnabled(AppUtilMethods.isPermissionGiven(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+
+    @Override
+    public void showAddressOfSelectedLocation(String address) {
+        if(address!=null) {
+            addressTv.setText(address);
+        }
     }
 
     public interface OnFragmentInteractionListener {

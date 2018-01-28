@@ -162,7 +162,8 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
                 @Override
                 public void onCameraIdle() {
                     LatLng midLatLng = googleMap.getCameraPosition().target;
-                    Toast.makeText(activity,midLatLng.latitude+" , "+midLatLng.longitude,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity,midLatLng.latitude+" , "+midLatLng.longitude,Toast.LENGTH_SHORT).show();
+                    callback.onLocationSelectedToAdd(midLatLng.latitude, midLatLng.longitude);
                 }
             });
 
