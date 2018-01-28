@@ -1,11 +1,11 @@
 package com.sunrider.bikeparking.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.helper.AppFragmentManager;
 import com.sunrider.bikeparking.db.DBManager;
-import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.fragments.HomeFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.presenters.MainPresenterImpl;
@@ -31,6 +31,8 @@ import com.sunrider.bikeparking.services.firebase.FirebaseAuthManager;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
 import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -158,54 +160,40 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             public void onClick(View view) {
 
                 final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
-
-                if (!addingNewLocationEntry) {
-                    fab.setImageResource(R.mipmap.ic_action_check);
-                    fab.setBackgroundColor(Color.YELLOW);
-                    addingNewLocationEntry = true;
-
-                    homeFragment.enableLocationPicker();
-                } else {
-                    fab.setImageResource(R.mipmap.ic_action_add);
-                    fab.setBackgroundColor(Color.CYAN);
-                    addingNewLocationEntry = false;
-
-                    final ParkingLocationEntity location = homeFragment.getParkingLocation();
-
-                    if(location == null){
-                        AppUtilMethods.showToast(MainActivity.this,"Location cannot be determined. Please try again.");
-                        return;
-                    }
-
-                    AppUtilMethods.showToast(MainActivity.this, location.getLat() + " - " + location.getLng());
-
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-
-                            final String address = LocationServiceImpl.getInstance(MainActivity.this).getAddress(location.getLat(), location.getLng());
-                            location.setAddress(address);
-                            System.out.println("*******ADDRESS: "+address);
-                            AppUtilMethods.showToast(MainActivity.this,address);
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    homeFragment.disableLocationPicker();
-                                    //progressBar.setVisibility(View.GONE);
-
-                                    Intent intent = new Intent(MainActivity.this, LocationEntryActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
-                    };
-
-                    new Thread(runnable).start();
+                if(homeFragment == null){
+                    return;
                 }
+
+                homeFragment.enableLocationPicker();
+                fab.setVisibility(View.GONE);
             }
         });
+    }
+
+    public void onSelectLocation(){
+
+        fab.setVisibility(View.VISIBLE);
+
+        final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
+        if(homeFragment == null){
+            return;
+        }
+
+        final LocationEntity location = homeFragment.getLocationEntity();
+
+        if(location == null){
+            AppUtilMethods.showToast(MainActivity.this,"Location cannot be determined. Please try again.");
+            return;
+        }
+
+        Intent intent = new Intent(MainActivity.this, LocationEntryActivity.class);
+        Parcelable wrappedLocation = Parcels.wrap(location);
+        intent.putExtra("Location", wrappedLocation);
+        startActivity(intent);
+    }
+
+    public void onCancelLocationSelection(){
+        fab.setVisibility(View.VISIBLE);
     }
 
     public void loadFragment() {

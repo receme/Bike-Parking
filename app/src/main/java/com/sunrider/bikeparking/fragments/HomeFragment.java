@@ -9,13 +9,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sunrider.bikeparking.R;
-import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+import com.sunrider.bikeparking.activities.MainActivity;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.HomeView;
 import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.presenters.HomePresenter;
@@ -38,6 +40,10 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     EditText searchEdtxt;
     @BindView(R.id.addressTv)
     TextView addressTv;
+    @BindView(R.id.okBtn)
+    Button okBtn;
+    @BindView(R.id.cancelBtn)
+    Button cancelBtn;
 
     private HomePresenter presenter;
 
@@ -106,6 +112,9 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     }
 
     public void enableLocationPicker() {
+        searchEdtxt.setText("");
+        addressTv.setText("");
+
         locationPickerMarker.setVisibility(View.VISIBLE);
         selectedLocationView.setVisibility(View.VISIBLE);
 
@@ -116,14 +125,12 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         locationPickerMarker.setVisibility(View.GONE);
         selectedLocationView.setVisibility(View.GONE);
 
-        searchEdtxt.setText("");
-        addressTv.setText("");
-
         presenter.disableLocationPicker();
     }
 
-    public ParkingLocationEntity getParkingLocation() {
-        ParkingLocationEntity position = presenter.getSelectedLocation();
+    public LocationEntity getLocationEntity() {
+        LocationEntity position = presenter.getSelectedLocation();
+        position.setAddress(addressTv.getText().toString());
         return position;
     }
 
@@ -151,6 +158,25 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     public void setLocationBtnEnabled() {
         presenter.setLocationBtnEnabled(AppUtilMethods.isPermissionGiven(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+
+    @Override
+    public void defineClickListener() {
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).onSelectLocation();
+                disableLocationPicker();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).onCancelLocationSelection();
+                disableLocationPicker();
+            }
+        });
     }
 
     @Override

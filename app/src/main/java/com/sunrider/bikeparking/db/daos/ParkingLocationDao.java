@@ -6,7 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ import java.util.List;
 public interface ParkingLocationDao {
 
     @Insert
-    long insertParkingLocation(ParkingLocationEntity parkingLocationEntity);
+    long insertParkingLocation(LocationEntity locationEntity);
 
     @Delete
-    int deleteParkingLocation(ParkingLocationEntity parkingLocationEntity);
+    int deleteParkingLocation(LocationEntity locationEntity);
 
     @Query("SELECT * FROM  parkinglocation")
-    List<ParkingLocationEntity> getAllParkingLocation();
+    List<LocationEntity> getAllParkingLocation();
 }

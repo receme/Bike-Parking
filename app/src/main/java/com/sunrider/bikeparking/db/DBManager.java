@@ -4,7 +4,7 @@ package com.sunrider.bikeparking.db;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
-import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 
 import java.util.List;
 
@@ -28,17 +28,17 @@ public class DBManager implements DatabaseService {
 
 
     @Override
-    public long insertParkingLocation(ParkingLocationEntity parkingLocationEntity) {
-        return appDatabase.parkingLocationDao().insertParkingLocation(parkingLocationEntity);
+    public long insertParkingLocation(LocationEntity locationEntity) {
+        return appDatabase.parkingLocationDao().insertParkingLocation(locationEntity);
     }
 
     @Override
-    public int deleteParkingLocation(ParkingLocationEntity parkingLocationEntity) {
-        return appDatabase.parkingLocationDao().deleteParkingLocation(parkingLocationEntity);
+    public int deleteParkingLocation(LocationEntity locationEntity) {
+        return appDatabase.parkingLocationDao().deleteParkingLocation(locationEntity);
     }
 
     @Override
-    public List<ParkingLocationEntity> getAllParkingLocation() {
+    public List<LocationEntity> getAllParkingLocation() {
         return appDatabase.parkingLocationDao().getAllParkingLocation();
     }
 }

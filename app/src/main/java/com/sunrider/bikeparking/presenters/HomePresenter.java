@@ -3,7 +3,7 @@ package com.sunrider.bikeparking.presenters;
 
 import android.location.Location;
 
-import com.sunrider.bikeparking.db.entities.ParkingLocationEntity;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.HomeView;
 import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.services.LocationService;
@@ -23,6 +23,7 @@ public class HomePresenter extends BasePresenter {
 
     @Override
     public void init() {
+        view.defineClickListener();
         mapService.loadMap();
     }
 
@@ -39,9 +40,9 @@ public class HomePresenter extends BasePresenter {
         mapService.setLocationBtnEnabled(isLocationPermissionGiven);
     }
 
-    public ParkingLocationEntity getSelectedLocation() {
+    public LocationEntity getSelectedLocation() {
 
-        ParkingLocationEntity locationEntity = mapService.getSelectedLocation();
+        LocationEntity locationEntity = mapService.getSelectedLocation();
         return locationEntity;
     }
 

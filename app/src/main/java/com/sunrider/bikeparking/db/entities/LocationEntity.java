@@ -6,25 +6,28 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import org.parceler.Parcel;
+
+@Parcel
 @Entity(tableName = "parkinglocation")
-public class ParkingLocationEntity {
+public class LocationEntity {
 
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    long id;
 
     @ColumnInfo(name = "address")
-    private String address;
+    String address;
 
     @ColumnInfo(name = "lat")
-    private double lat;
+    double lat;
 
     @ColumnInfo(name = "lng")
-    private double lng;
+    double lng;
 
     @ColumnInfo(name = "comment")
-    private String comment;
+    String comment;
 
-    public ParkingLocationEntity(String address, double lat, double lng, String comment) {
+    public LocationEntity(String address, double lat, double lng, String comment) {
         this.address = address;
         this.lat = lat;
         this.lng = lng;
@@ -32,7 +35,7 @@ public class ParkingLocationEntity {
     }
 
     @Ignore
-    public ParkingLocationEntity() {
+    public LocationEntity() {
     }
 
     public long getId() {
