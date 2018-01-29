@@ -101,7 +101,6 @@ public class LocationServiceImpl implements LocationService, LocationListener {
         }
     }
 
-
     @Override
     public void setLocationListener(LocationListener listener) {
         this.listener = listener;
@@ -187,13 +186,9 @@ public class LocationServiceImpl implements LocationService, LocationListener {
                         sb.append(postalCode);
                     }
                 }
-
-
                 addressLine = sb.toString();
 
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -201,26 +196,21 @@ public class LocationServiceImpl implements LocationService, LocationListener {
         return addressLine;
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
-
     }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-        System.out.println("GPS status changed");
     }
 
     @Override
     public void onProviderEnabled(String s) {
-        System.out.println("GPS enabled");
         startLocationUpdates();
     }
 
     @Override
     public void onProviderDisabled(String s) {
-        System.out.println("GPS disabled");
         stopLocationUpdates();
     }
 }

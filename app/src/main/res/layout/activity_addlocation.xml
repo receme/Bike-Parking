@@ -2,23 +2,35 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:local="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <LinearLayout
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/btnContainer"
+        android:padding="10dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="20dp"
-            app:srcCompat="@mipmap/ic_launcher"/>
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="15dp"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"/>
 
 
         <LinearLayout
@@ -28,28 +40,41 @@
 
             <ImageView
                 android:id="@+id/imageView2"
+                android:layout_marginRight="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:srcCompat="@mipmap/ic_launcher"/>
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/addressEdtxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="2"
                 android:maxLines="2"
-                android:gravity="top"
-                android:hint="@string/address"/>
+                android:gravity="center_vertical"
+                android:hint="Name of the place"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <RadioGroup
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="30dp"
-            android:text="TextView"/>
+            android:layout_marginBottom="10dp"
+            android:id="@+id/locationTypeRG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/bikeParkingRB"
+                android:text="Bike parking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RadioButton
+                android:id="@+id/bikeServicingRB"
+                android:text="Bike servicing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RadioGroup>
 
 
         <LinearLayout
@@ -59,17 +84,17 @@
 
             <ImageView
                 android:id="@+id/imageView3"
+                android:layout_marginRight="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@mipmap/ic_launcher"/>
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/commentEdtxt"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="top"
-                android:inputType="textPersonName"
-                android:hint="@string/comment"/>
+                android:hint="Comments (optional)"/>
         </LinearLayout>
 
 

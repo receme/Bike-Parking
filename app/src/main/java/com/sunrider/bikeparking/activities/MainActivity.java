@@ -60,9 +60,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     //state variables
     private boolean shouldLoadHomeFragOnBackPress = true;
     private boolean isMapLoaded = false;
-    private boolean addingNewLocationEntry = false;
-
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
