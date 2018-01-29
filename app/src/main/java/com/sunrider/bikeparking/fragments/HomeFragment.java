@@ -71,13 +71,20 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         ButterKnife.bind(this, view);
 
         //presenter = new HomePresenter(this, new GoogleMapImpl(getActivity(), this));
-        presenter.init();
+        //presenter.init();
 
         if (location != null) {
             presenter.showLocation(location);
         }
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        presenter.init();
     }
 
     @Override
