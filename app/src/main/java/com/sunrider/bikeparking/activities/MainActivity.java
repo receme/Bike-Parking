@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
             @Override
             public void onClick(View view) {
 
-                final HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
+                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(NavigationDrawerManager.TAG_HOME);
                 if(homeFragment == null){
                     return;
                 }

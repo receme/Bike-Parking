@@ -4,6 +4,8 @@ package com.sunrider.bikeparking.activities;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -40,10 +42,6 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     RadioButton bikeParkingRB;
     @BindView(R.id.bikeServicingRB)
     RadioButton bikeServicingRB;
-    @BindView(R.id.okBtn)
-    Button okBtn;
-    @BindView(R.id.cancelBtn)
-    Button cancelBtn;
 
     private Marker marker;
     private LocationEntryPresenter presenter;
@@ -53,6 +51,8 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         presenter = new LocationEntryPresenter(this);
         presenter.init();
@@ -81,6 +81,7 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     @Override
     public void setLocationInfo(LocationEntity locationEntity) {
         addressEdtxt.setText(locationEntity.getAddress());
+        addressEdtxt.setSelection(addressEdtxt.getText().toString().length());
     }
 
     @Override
@@ -121,5 +122,22 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     @Override
     public void onMapClick(LatLng latLng) {
         marker.showInfoWindow();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.location_entry_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        else if(item.getItemId() == R.id.action_done){
+            AppUtilMethods.showToast(this,"Done");
+        }
+        return true;
     }
 }

@@ -29,6 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setTitle(getActivityTitle());
         }
 
     }
