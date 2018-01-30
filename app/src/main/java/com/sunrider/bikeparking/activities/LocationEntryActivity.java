@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -91,6 +92,12 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
             AppUtilMethods.showAlert(this, "", getResources().getString(R.string.map_load_fail), "Ok", null, null);
             return;
         }
+
+
+        int[] screenWidthHeight = AppUtilMethods.getScreenSize(this);
+        int height = screenWidthHeight[1];
+        mapFragment.getView().getLayoutParams().height = height/4;
+
         mapFragment.getView().setClickable(false);
         mapFragment.getMapAsync(this);
 
@@ -116,6 +123,8 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
                             .title(addressEdtxt.getText().toString()));
             marker.showInfoWindow();
 
+            position = new LatLng(entity.getLat()+0.0020, entity.getLng());
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
         }
     }
 

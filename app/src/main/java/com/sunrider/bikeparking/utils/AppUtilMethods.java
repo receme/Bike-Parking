@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -131,5 +132,15 @@ public class AppUtilMethods {
     public static boolean isPermissionGiven(Context context,String permission){
         int result = ContextCompat.checkSelfPermission(context, permission);
         return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static int[] getScreenSize(Activity activity){
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        return new int[]{width,height};
     }
 }
