@@ -137,7 +137,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     @Override
     public void showLocation(Location location) {
 
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 
     }
 

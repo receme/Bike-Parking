@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                 LocationServiceImpl.getInstance(this),
                 new DexterPermissionChecker(this));
         presenter.init();
-        presenter.checkLocationPermission();
+
 
         if (savedInstanceState == null) {
             navigationDrawerManager.setNavItemIndex(0);
@@ -194,6 +194,10 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
     }
 
     public void loadFragment() {
+
+        if(NavigationDrawerManager.navItemIndex == 0){
+            presenter.checkLocationPermission();
+        }
 
         navigationDrawerManager.selectNavMenu(NavigationDrawerManager.navItemIndex);
         navigationDrawerManager.setToolbarTitle(getSupportActionBar());
