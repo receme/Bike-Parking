@@ -4,10 +4,10 @@ package com.sunrider.bikeparking.activities;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -31,7 +31,7 @@ import org.parceler.Parcels;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LocationEntryActivity extends BaseActivity implements LocationEntryView, OnMapReadyCallback,GoogleMap.OnMapClickListener {
+public class LocationEntryActivity extends BaseActivity implements LocationEntryView, OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     @BindView(R.id.addressEdtxt)
     EditText addressEdtxt;
@@ -58,6 +58,25 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
         presenter = new LocationEntryPresenter(this);
         presenter.init();
 
+        addressEdtxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (marker != null) {
+                    marker.setTitle(charSequence.toString());
+                    marker.showInfoWindow();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override
@@ -96,7 +115,7 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
 
         int[] screenWidthHeight = AppUtilMethods.getScreenSize(this);
         int height = screenWidthHeight[1];
-        mapFragment.getView().getLayoutParams().height = height/4;
+        mapFragment.getView().getLayoutParams().height = height / 4;
 
         mapFragment.getView().setClickable(false);
         mapFragment.getMapAsync(this);
@@ -123,7 +142,7 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
                             .title(addressEdtxt.getText().toString()));
             marker.showInfoWindow();
 
-            position = new LatLng(entity.getLat()+0.0020, entity.getLng());
+            position = new LatLng(entity.getLat() + 0.0020, entity.getLng());
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
         }
     }
@@ -135,17 +154,16 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.location_entry_menu,menu);
+        getMenuInflater().inflate(R.menu.location_entry_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
-        }
-        else if(item.getItemId() == R.id.action_done){
-            AppUtilMethods.showToast(this,"Done");
+        } else if (item.getItemId() == R.id.action_done) {
+            AppUtilMethods.showToast(this, "Done");
         }
         return true;
     }
