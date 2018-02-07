@@ -64,6 +64,7 @@
             <RadioButton
                 android:id="@+id/bikeParkingRB"
                 android:text="Bike parking"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

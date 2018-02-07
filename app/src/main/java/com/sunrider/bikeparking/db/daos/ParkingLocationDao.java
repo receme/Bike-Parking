@@ -19,6 +19,6 @@ public interface ParkingLocationDao {
     @Delete
     int deleteParkingLocation(LocationEntity locationEntity);
 
-    @Query("SELECT * FROM  parkinglocation")
+    @Query("SELECT * FROM  locationentity")
     List<LocationEntity> getAllParkingLocation();
 }

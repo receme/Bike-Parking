@@ -5,17 +5,16 @@ import android.location.Location;
 
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.HomeView;
-import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.services.LocationService;
 import com.sunrider.bikeparking.services.MapService;
 
 public class HomePresenter extends BasePresenter {
 
     private final HomeView view;
-    private final MapService<BikeUtilityLocation> mapService;
+    private final MapService<LocationEntity> mapService;
     private final LocationService locationService;
 
-    public HomePresenter(final HomeView view, final MapService<BikeUtilityLocation> mapService, final LocationService locationService) {
+    public HomePresenter(final HomeView view, final MapService<LocationEntity> mapService, final LocationService locationService) {
         this.view = view;
         this.mapService = mapService;
         this.locationService = locationService;

@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -24,7 +25,9 @@ import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.LocationEntryView;
 import com.sunrider.bikeparking.presenters.LocationEntryPresenter;
+import com.sunrider.bikeparking.services.apiwrapper.BikeRiderServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
+import com.sunrider.bikeparking.utils.DateUtils;
 
 import org.parceler.Parcels;
 
@@ -55,7 +58,7 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        presenter = new LocationEntryPresenter(this);
+        presenter = new LocationEntryPresenter(this, new BikeRiderServiceImpl(getString(R.string.api_base_url)));
         presenter.init();
 
         addressEdtxt.addTextChangedListener(new TextWatcher() {
@@ -123,6 +126,11 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     }
 
     @Override
+    public void showAlert(String message) {
+        AppUtilMethods.showAlert(this, "", message, "Ok", null, null);
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
 
         if (googleMap != null) {
@@ -163,8 +171,28 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
         if (item.getItemId() == android.R.id.home) {
             finish();
         } else if (item.getItemId() == R.id.action_done) {
-            AppUtilMethods.showToast(this, "Done");
+
+            LocationEntity location = presenter.getLocationEntity();
+            location.setAddress(addressEdtxt.getText().toString());
+            location.setComment(commentEdtxt.getText().toString());
+            location.setType(getLocationType());
+            location.setUpdated_at(DateUtils.getCurrentDateTime());
+
+            presenter.addLocation(location);
         }
         return true;
     }
+
+    String getLocationType() {
+        int radioButtonID = locationTypeRG.getCheckedRadioButtonId();
+        View radioButton = locationTypeRG.findViewById(radioButtonID);
+        int btnIndex = locationTypeRG.indexOfChild(radioButton);
+        if (btnIndex == 0) {
+            return LocationEntity.LocationType.PARKING.toString();
+        } else {
+            return LocationEntity.LocationType.SERVICING.toString();
+        }
+    }
+
+
 }

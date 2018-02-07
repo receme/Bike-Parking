@@ -20,20 +20,19 @@ import com.google.android.gms.maps.model.Marker;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.BaseView;
-import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.services.MapService;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 
 import java.util.List;
 
-public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private Activity activity;
     private GoogleMap googleMap;
     private Fragment fragment;
     private Callback callback;
-    private List<BikeUtilityLocation> listOfBikeUtilityLocations;
+    private List<LocationEntity> listOfBikeUtilityLocations;
 
 
     public GoogleMapImpl(Activity activity, @NonNull Fragment fragment) {
@@ -129,7 +128,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     }
 
     @Override
-    public void addMarkers(List<BikeUtilityLocation> markers) {
+    public void addMarkers(List<LocationEntity> markers) {
 
     }
 
@@ -169,8 +168,8 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
         }
     }
 
-    private void getLocationOnTarget(GoogleMap googleMap){
-        if(googleMap != null){
+    private void getLocationOnTarget(GoogleMap googleMap) {
+        if (googleMap != null) {
             LatLng midLatLng = googleMap.getCameraPosition().target;
             callback.onLocationSelectedToAdd(midLatLng.latitude, midLatLng.longitude);
         }
@@ -186,7 +185,7 @@ public class GoogleMapImpl implements MapService<BikeUtilityLocation>, OnMapRead
     @Override
     public LocationEntity getSelectedLocation() {
 
-        if(googleMap!=null){
+        if (googleMap != null) {
             LatLng midLatLng = googleMap.getCameraPosition().target;
             LocationEntity parkingLocation = new LocationEntity();
             parkingLocation.setLat(midLatLng.latitude);

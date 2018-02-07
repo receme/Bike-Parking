@@ -9,4 +9,6 @@ public interface LocationEntryView {
     void setLocationInfo(LocationEntity locationEntity);
 
     void showLocationOnMapReady();
+
+    void showAlert(String message);
 }

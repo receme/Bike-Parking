@@ -19,7 +19,6 @@ import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.MainActivity;
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.HomeView;
-import com.sunrider.bikeparking.models.BikeUtilityLocation;
 import com.sunrider.bikeparking.presenters.HomePresenter;
 import com.sunrider.bikeparking.services.MapService;
 import com.sunrider.bikeparking.services.googlemap.GoogleMapImpl;
@@ -30,7 +29,7 @@ import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeFragment extends Fragment implements HomeView, MapService.Callback<BikeUtilityLocation> {
+public class HomeFragment extends Fragment implements HomeView, MapService.Callback<LocationEntity> {
 
     @BindView(R.id.locationPickerMarker)
     ImageView locationPickerMarker;
@@ -149,7 +148,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
     }
 
     @Override
-    public void onMarkerClicked(BikeUtilityLocation vt) {
+    public void onMarkerClicked(LocationEntity vt) {
 
     }
 
