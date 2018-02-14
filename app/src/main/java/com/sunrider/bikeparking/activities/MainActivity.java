@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.helper.AppFragmentManager;
+import com.sunrider.bikeparking.activities.helper.RequestCode;
 import com.sunrider.bikeparking.db.DBManager;
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.fragments.HomeFragment;
@@ -186,7 +187,7 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         Intent intent = new Intent(MainActivity.this, LocationEntryActivity.class);
         Parcelable wrappedLocation = Parcels.wrap(location);
         intent.putExtra("Location", wrappedLocation);
-        startActivity(intent);
+        startActivityForResult(intent, RequestCode.ADD_LOCATION);
     }
 
     public void onCancelLocationSelection(){

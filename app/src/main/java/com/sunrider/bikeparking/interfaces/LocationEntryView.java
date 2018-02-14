@@ -11,4 +11,6 @@ public interface LocationEntryView {
     void showLocationOnMapReady();
 
     void showAlert(String message);
+
+    void onLocationAddedSuccess(LocationEntity location, String message);
 }

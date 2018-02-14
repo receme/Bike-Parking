@@ -1,6 +1,7 @@
 package com.sunrider.bikeparking.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -131,6 +133,17 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     }
 
     @Override
+    public void onLocationAddedSuccess(LocationEntity location, String message) {
+        Intent intent = new Intent(this,MainActivity.class);
+        Parcelable locationParcelable = Parcels.wrap(location);
+        intent.putExtra("location",locationParcelable);
+        setResult(RESULT_OK,intent);
+        finish();
+
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
 
         if (googleMap != null) {
@@ -157,7 +170,9 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
 
     @Override
     public void onMapClick(LatLng latLng) {
-        marker.showInfoWindow();
+        if(marker!=null){
+            marker.showInfoWindow();
+        }
     }
 
     @Override

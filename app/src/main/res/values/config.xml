@@ -3,5 +3,5 @@
     <string name="map_api_key">AIzaSyCUb6FqGoIuRtyPuNv3xx5WoMWxS-Vjswc</string>
     <string name="facebook_app_id">1857320797892369</string>
     <string name="fb_login_protocol_scheme">fb1857320797892369</string>
-    <string name="api_base_url">http://127.0.0.1:3000</string>
+    <string name="api_base_url">http://192.168.0.107:3000</string>
 </resources>

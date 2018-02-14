@@ -3,6 +3,7 @@ package com.sunrider.bikeparking.services.apiwrapper;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -10,9 +11,8 @@ import retrofit2.http.POST;
 
 public interface BikeRiderApi {
 
-    @FormUrlEncoded
     @POST("/api/adduser")
-    Call<ResponseBody> addUser(@Field("userid") String userid, @Field("address") String address, @Field("profileimg") String profileimg, @Field("account_created_at") String accountCreatedAt);
+    Call<ResponseBody> addUser(@Body String userid, @Body String address, @Body String profileimg, @Body String accountCreatedAt);
 
     @FormUrlEncoded
     @POST("/api/getUser")
@@ -29,7 +29,7 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @POST("/api/updatelocation")
-    Call<ResponseBody> updateLocation(@Field("id") String id,@Field("address") String address, @Field("lat") String lat, @Field("lng") String lng,
+    Call<ResponseBody> updateLocation(@Field("id") String id, @Field("address") String address, @Field("lat") String lat, @Field("lng") String lng,
                                       @Field("type") String type, @Field("comment") String comment, @Field("updated_at") String updatedAt, @Field("userid") String userid);
 
     @FormUrlEncoded
@@ -39,7 +39,7 @@ public interface BikeRiderApi {
     @FormUrlEncoded
     @POST("/api/reportlocation")
     Call<ResponseBody> reportLocation(@Field("location_id") String location_id, @Field("reason") String reason,
-                                      @Field("reported_by") String id, @Field("created_at")String createdAt);
+                                      @Field("reported_by") String id, @Field("created_at") String createdAt);
 
     @FormUrlEncoded
     @GET("/api/locations")

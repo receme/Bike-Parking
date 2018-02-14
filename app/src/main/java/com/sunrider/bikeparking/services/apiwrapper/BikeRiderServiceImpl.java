@@ -20,7 +20,7 @@ public class BikeRiderServiceImpl implements BikeRiderService {
     public BikeRiderServiceImpl(String baseUrl) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder okHttp = new OkHttpClient.Builder();
         okHttp.connectTimeout(60, TimeUnit.SECONDS);
@@ -62,7 +62,7 @@ public class BikeRiderServiceImpl implements BikeRiderService {
 
     @Override
     public void addLocation(String name, String lat, String lng, String type, String comment, String updatedAt, String userid, RequestListener<ResponseBody> listener) {
-        Call<ResponseBody> call = api.addLocation(userid, lat, lng, type, comment, updatedAt, userid);
+        Call<ResponseBody> call = api.addLocation(name, lat, lng, type, comment, updatedAt, userid);
         call.enqueue(new RequestCallback<>(listener));
     }
 
