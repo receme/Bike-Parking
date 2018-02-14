@@ -12,7 +12,7 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @POST("/api/adduser")
-    Call<ResponseBody> addUser(@Field("userid") String userid, @Field("name") String name, @Field("profileimg") String profileimg, @Field("account_created_at") String accountCreatedAt);
+    Call<ResponseBody> addUser(@Field("userid") String userid, @Field("address") String address, @Field("profileimg") String profileimg, @Field("account_created_at") String accountCreatedAt);
 
     @FormUrlEncoded
     @POST("/api/getUser")
@@ -24,12 +24,12 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @POST("/api/addlocation")
-    Call<ResponseBody> addLocation(@Field("name") String name, @Field("lat") String lat, @Field("lng") String lng,
+    Call<ResponseBody> addLocation(@Field("address") String address, @Field("lat") String lat, @Field("lng") String lng,
                                    @Field("type") String type, @Field("comment") String comment, @Field("updated_at") String updatedAt, @Field("userid") String userid);
 
     @FormUrlEncoded
     @POST("/api/updatelocation")
-    Call<ResponseBody> updateLocation(@Field("id") String id,@Field("name") String name, @Field("lat") String lat, @Field("lng") String lng,
+    Call<ResponseBody> updateLocation(@Field("id") String id,@Field("address") String address, @Field("lat") String lat, @Field("lng") String lng,
                                       @Field("type") String type, @Field("comment") String comment, @Field("updated_at") String updatedAt, @Field("userid") String userid);
 
     @FormUrlEncoded

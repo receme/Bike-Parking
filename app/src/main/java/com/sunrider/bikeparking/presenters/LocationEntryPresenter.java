@@ -48,6 +48,11 @@ public class LocationEntryPresenter extends BasePresenter {
                 location.getComment(), location.getUpdated_at(), location.getUserid(), new RequestListener<ResponseBody>() {
             @Override
             public void onResponseSuccess(ResponseBody response) {
+                if(response == null)
+                    return;
+
+
+
 
             }
 
