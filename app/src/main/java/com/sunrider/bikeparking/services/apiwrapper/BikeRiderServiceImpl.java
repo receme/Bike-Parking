@@ -86,7 +86,7 @@ public class BikeRiderServiceImpl implements BikeRiderService {
 
     @Override
     public void getLocations(String userid, RequestListener<ResponseBody> listener) {
-        Call<ResponseBody> call = api.removeLocation(userid);
+        Call<ResponseBody> call = api.getLocations(userid);
         call.enqueue(new RequestCallback<>(listener));
     }
 }

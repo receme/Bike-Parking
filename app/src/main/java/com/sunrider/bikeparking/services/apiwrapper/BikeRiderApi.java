@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface BikeRiderApi {
 
@@ -43,6 +44,6 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @GET("/api/locations")
-    Call<ResponseBody> getLocations(@Field("userid") String userid);
+    Call<ResponseBody> getLocations(@Query("lat") String lat, @Query("lng") String lng, @Query("radius") String radius);
 
 }
