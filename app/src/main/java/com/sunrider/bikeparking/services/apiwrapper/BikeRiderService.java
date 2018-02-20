@@ -20,5 +20,5 @@ public interface BikeRiderService {
 
     void reportLocation(String location_id, String reason, String id, String createdAt, RequestListener<ResponseBody> listener);
 
-    void getLocations(String userid, RequestListener<ResponseBody> listener);
+    void getLocations(String lat, String lng, String radius, RequestListener<ResponseBody> listener);
 }

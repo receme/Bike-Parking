@@ -22,47 +22,15 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 public class AppUtilMethods {
 
-    private static Dialog progressDialog;
-
-    public static void showProgressDialog(Context context, String message) {
-
-        if (progressDialog == null) {
-            progressDialog = new Dialog(context, R.style.ProgressViewTheme);
-
-        }
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.progress_indicator,null);
-        AVLoadingIndicatorView progressView = (AVLoadingIndicatorView) view.findViewById(R.id.progressView);
-        TextView progressMessageTv = (TextView) view.findViewById(R.id.progressMessageTv);
-
-        progressMessageTv.setText(message);
-        progressView.show();
-        progressDialog.setContentView(view);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
+    public static void showToast(final Activity activity, int resourceId) {
+        Toast.makeText(activity, activity.getString(resourceId), Toast.LENGTH_SHORT).show();
     }
 
-    public static void hideProgressDialog() {
-
-        if (progressDialog != null) {
-
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
+    public static void showToast(final Activity activity, String message) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
     }
 
-
-    public static void showToast(final Activity activity,int resourceId){
-        Toast.makeText(activity,activity.getString(resourceId),Toast.LENGTH_SHORT).show();
-    }
-
-    public static void showToast(final Activity activity,String message){
-        Toast.makeText(activity,message,Toast.LENGTH_SHORT).show();
-    }
-
-    public static void showSnackbar(final Activity activity,final int mainTextStringId, final int actionStringId,
+    public static void showSnackbar(final Activity activity, final int mainTextStringId, final int actionStringId,
                                     View.OnClickListener listener) {
         Snackbar.make(
                 activity.findViewById(android.R.id.content),
@@ -78,7 +46,7 @@ public class AppUtilMethods {
             @Override
             public void run() {
 
-                hideProgressDialog();
+                ProgressDialogUtils.hideProgressDialog();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 if (StringUtils.isNotNullOrEmpty(title)) {
@@ -120,27 +88,27 @@ public class AppUtilMethods {
 
     }
 
-    public static boolean isStartWithCapitalLetters(final String inputStr){
+    public static boolean isStartWithCapitalLetters(final String inputStr) {
 
-        if(!StringUtils.isNotNullOrEmpty(inputStr)){
+        if (!StringUtils.isNotNullOrEmpty(inputStr)) {
             return false;
         }
 
         return inputStr.matches("\\b[A-Z]\\b");
     }
 
-    public static boolean isPermissionGiven(Context context,String permission){
+    public static boolean isPermissionGiven(Context context, String permission) {
         int result = ContextCompat.checkSelfPermission(context, permission);
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static int[] getScreenSize(Activity activity){
+    public static int[] getScreenSize(Activity activity) {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 
-        return new int[]{width,height};
+        return new int[]{width, height};
     }
 }

@@ -30,6 +30,7 @@ import com.sunrider.bikeparking.presenters.LocationEntryPresenter;
 import com.sunrider.bikeparking.services.apiwrapper.BikeRiderServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.DateUtils;
+import com.sunrider.bikeparking.utils.ProgressDialogUtils;
 
 import org.parceler.Parcels;
 
@@ -210,4 +211,13 @@ public class LocationEntryActivity extends BaseActivity implements LocationEntry
     }
 
 
+    @Override
+    public void showProgressDialog(String message) {
+        ProgressDialogUtils.showProgressDialog(this,message);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        ProgressDialogUtils.hideProgressDialog();
+    }
 }

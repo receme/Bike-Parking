@@ -3,7 +3,7 @@ package com.sunrider.bikeparking.interfaces;
 
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 
-public interface LocationEntryView {
+public interface LocationEntryView extends ProgressDialogView{
     LocationEntity getLocationEntity();
 
     void setLocationInfo(LocationEntity locationEntity);

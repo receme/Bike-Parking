@@ -51,10 +51,13 @@ public class LocationEntryPresenter extends BasePresenter {
             return;
         }
 
+        view.showProgressDialog("Please wait...");
+
         service.addLocation(location.getAddress(), Double.toString(location.getLat()), Double.toString(location.getLng()), location.getType(),
                 location.getComment(), location.getUpdated_at(), location.getUserid(), new RequestListener<ResponseBody>() {
                     @Override
                     public void onResponseSuccess(ResponseBody response) {
+                        view.hideProgressDialog();
 
                         if (response == null) {
                             view.showAlert("Something went wrong. Please try again later.");
@@ -78,12 +81,16 @@ public class LocationEntryPresenter extends BasePresenter {
 
                     @Override
                     public void onResponseFailure(Throwable t) {
+                        view.hideProgressDialog();
+
                         if (t != null) {
                             Log.v("ERROR", t.getMessage());
                             t.printStackTrace();
                         }
                     }
                 });
+
+        view.hideProgressDialog();
 
     }
 
