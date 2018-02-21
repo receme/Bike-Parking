@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.activities.MainActivity;
@@ -179,7 +180,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).onSelectLocation();
+                ((MainActivity) getActivity()).onSelectLocation();
                 disableLocationPicker();
             }
         });
@@ -187,7 +188,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).onCancelLocationSelection();
+                ((MainActivity) getActivity()).onCancelLocationSelection();
                 disableLocationPicker();
             }
         });
@@ -195,9 +196,14 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
 
     @Override
     public void showAddressOfSelectedLocation(String address) {
-        if(address!=null) {
+        if (address != null) {
             addressTv.setText(address);
         }
+    }
+
+    @Override
+    public void showToastMessage(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
 
