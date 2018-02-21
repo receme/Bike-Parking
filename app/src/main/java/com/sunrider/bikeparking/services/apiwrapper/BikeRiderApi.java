@@ -42,7 +42,6 @@ public interface BikeRiderApi {
     Call<ResponseBody> reportLocation(@Field("location_id") String location_id, @Field("reason") String reason,
                                       @Field("reported_by") String id, @Field("created_at")String createdAt);
 
-    @FormUrlEncoded
     @GET("/api/locations")
     Call<ResponseBody> getLocations(@Query("lat") double lat, @Query("lng") double lng, @Query("radius") double radius);
 

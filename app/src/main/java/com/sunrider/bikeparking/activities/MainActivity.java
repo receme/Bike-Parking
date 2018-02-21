@@ -73,7 +73,6 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         presenter = new MainPresenterImpl(
                 this,
                 new FirebaseManager(this),
-                DBManager.getInstance(this),
                 LocationServiceImpl.getInstance(this),
                 new DexterPermissionChecker(this),
                 new BikeRiderServiceImpl(getString(R.string.api_base_url)));

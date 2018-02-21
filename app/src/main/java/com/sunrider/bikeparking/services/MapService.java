@@ -16,8 +16,6 @@ public interface MapService<T> {
 
     void showLocation(Location location);
 
-    void showLocationEntities(List<LocationEntity> locationEntities);
-
     void setLocationBtnEnabled(boolean isLocationPermissionGiven);
 
     void enableLocationPicker();

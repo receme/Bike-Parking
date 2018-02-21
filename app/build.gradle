@@ -54,8 +54,10 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.9'
     annotationProcessor 'org.parceler:parceler:1.1.9'
 
-    compile "android.arch.persistence.room:runtime:1.1.0-alpha1"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.0-alpha1"
+    implementation "android.arch.lifecycle:livedata:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
 
     testCompile 'junit:junit:4.12'
 }

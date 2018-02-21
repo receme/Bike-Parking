@@ -15,8 +15,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.sunrider.bikeparking.R;
 import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.BaseView;
@@ -127,8 +129,17 @@ public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCall
     }
 
     @Override
-    public void addMarkers(List<LocationEntity> markers) {
+    public void addMarkers(List<LocationEntity> locationEntities) {
+        if (googleMap == null) {
+            return;
+        }
 
+        for (LocationEntity location : locationEntities) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLat(), location.getLng()))
+                    .title(location.getAddress())
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)));
+        }
     }
 
 
@@ -140,16 +151,6 @@ public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCall
         }
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 
-    }
-
-    @Override
-    public void showLocationEntities(List<LocationEntity> locationEntities) {
-        if (googleMap == null) {
-            return;
-        }
-        for (LocationEntity location : locationEntities) {
-
-        }
     }
 
     @SuppressLint("MissingPermission")

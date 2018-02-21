@@ -38,9 +38,16 @@ public class HomePresenter extends BasePresenter {
 
     public void showLocationEntitiesOnMap(List<LocationEntity> locationEntities) {
 
-        if (mapService.isReady() && locationEntities != null && locationEntities.size() > 0) {
-            mapService.showLocationEntities(locationEntities);
+        if(locationEntities==null || locationEntities.size() ==0){
+            view.showToastMessage("No bikerider location is found around you.");
+            return;
         }
+
+        if (mapService.isReady() && locationEntities != null && locationEntities.size() > 0) {
+            mapService.addMarkers(locationEntities);
+        }
+
+
     }
 
     public void setLocationBtnEnabled(boolean isLocationPermissionGiven) {

@@ -10,10 +10,12 @@ import com.sunrider.bikeparking.db.entities.LocationEntity;
 
 import java.util.List;
 
+import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
+
 @Dao
 public interface ParkingLocationDao {
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     long insertParkingLocation(LocationEntity locationEntity);
 
     @Delete

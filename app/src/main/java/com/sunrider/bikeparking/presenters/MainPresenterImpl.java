@@ -25,20 +25,16 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
 
     private final MainView view;
     private final FirebaseService firebase;
-    private final DatabaseService dbService;
     private final PermissionCheckerService permissionCheckerService;
     private final MainPresenter self;
     private final BikeRiderService service;
 
     private LocationService locationService;
 
-//    private Location location;
-
-    public MainPresenterImpl(MainView view, FirebaseService firebase, DatabaseService dbService, LocationService locationService,
+    public MainPresenterImpl(MainView view, FirebaseService firebase,  LocationService locationService,
                              PermissionCheckerService permissionCheckerService, BikeRiderService service) {
         this.view = view;
         this.firebase = firebase;
-        this.dbService = dbService;
         this.locationService = locationService;
         this.permissionCheckerService = permissionCheckerService;
         this.service = service;
@@ -98,7 +94,7 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
             view.showLocationOnMap(location);
             view.saveAsLastKnownLocation(location);
 
-            service.getLocations(location.getLatitude(), location.getLongitude(), 2, new RequestListener<ResponseBody>() {
+            service.getLocations(location.getLatitude(), location.getLongitude(), 5, new RequestListener<ResponseBody>() {
                 @Override
                 public void onResponseSuccess(ResponseBody response) {
 
@@ -131,19 +127,32 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
                 }
 
                 @Override
                 public void onResponseFailure(Throwable t) {
 
+                    t.printStackTrace();
+
+                    view.showAlert("", "An error occurred when app was trying to fetch data. Refresh the app to fix the problem.",
+                            "Ok", null, null);
                 }
             });
 
         }
 
     }
+
+//    public void showLocationEntitiesFromDB(){
+//
+//        List<LocationEntity> locationEntities = dbService.getAllParkingLocation();
+//
+//        if(locationEntities==null){
+//            return;
+//        }
+//
+//        view.showLocationEntitiesOnMap(locationEntities);
+//    }
 
     @Override
     public void onLocationResolutionSuccess() {
