@@ -44,6 +44,6 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @GET("/api/locations")
-    Call<ResponseBody> getLocations(@Query("lat") String lat, @Query("lng") String lng, @Query("radius") String radius);
+    Call<ResponseBody> getLocations(@Query("lat") double lat, @Query("lng") double lng, @Query("radius") double radius);
 
 }

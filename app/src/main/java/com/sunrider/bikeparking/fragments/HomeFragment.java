@@ -26,6 +26,8 @@ import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 import com.sunrider.bikeparking.utils.GooglePlayServiceUtils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -117,6 +119,12 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
         }
     }
 
+
+    public void showLocationEntitiesOnMap(List<LocationEntity> locationEntity) {
+
+        presenter.showLocationEntitiesOnMap(locationEntity);
+    }
+
     public void enableLocationPicker() {
         searchEdtxt.setText("");
         addressTv.setText("");
@@ -191,6 +199,7 @@ public class HomeFragment extends Fragment implements HomeView, MapService.Callb
             addressTv.setText(address);
         }
     }
+
 
     public interface OnFragmentInteractionListener {
         void onMapLoadingComplete();

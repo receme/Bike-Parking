@@ -4,12 +4,22 @@ package com.sunrider.bikeparking.presenters;
 import android.Manifest;
 import android.location.Location;
 
+import com.google.gson.Gson;
 import com.sunrider.bikeparking.db.DatabaseService;
+import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.interfaces.BaseView;
 import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.services.LocationService;
 import com.sunrider.bikeparking.services.PermissionCheckerService;
+import com.sunrider.bikeparking.services.apiwrapper.BikeRiderService;
+import com.sunrider.bikeparking.services.apiwrapper.RequestListener;
+import com.sunrider.bikeparking.services.apiwrapper.responses.GetLocationsResponse;
 import com.sunrider.bikeparking.services.firebase.FirebaseService;
+
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.ResponseBody;
 
 public class MainPresenterImpl implements MainPresenter, LocationService.LocationListener {
 
@@ -18,17 +28,20 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
     private final DatabaseService dbService;
     private final PermissionCheckerService permissionCheckerService;
     private final MainPresenter self;
+    private final BikeRiderService service;
 
     private LocationService locationService;
 
 //    private Location location;
 
-    public MainPresenterImpl(MainView view, FirebaseService firebase, DatabaseService dbService, LocationService locationService, PermissionCheckerService permissionCheckerService) {
+    public MainPresenterImpl(MainView view, FirebaseService firebase, DatabaseService dbService, LocationService locationService,
+                             PermissionCheckerService permissionCheckerService, BikeRiderService service) {
         this.view = view;
         this.firebase = firebase;
         this.dbService = dbService;
         this.locationService = locationService;
         this.permissionCheckerService = permissionCheckerService;
+        this.service = service;
         this.self = this;
     }
 
@@ -84,6 +97,50 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
         if (location != null) {
             view.showLocationOnMap(location);
             view.saveAsLastKnownLocation(location);
+
+            service.getLocations(location.getLatitude(), location.getLongitude(), 2, new RequestListener<ResponseBody>() {
+                @Override
+                public void onResponseSuccess(ResponseBody response) {
+
+                    if (response == null) {
+                        view.showAlert("", "An error occurred when app was trying to fetch data. Refresh the app to fix the problem.",
+                                "Ok", null, null);
+                        return;
+                    }
+
+
+                    try {
+                        Gson gson = new Gson();
+                        GetLocationsResponse getLocationsResponse = gson.fromJson(response.string(), GetLocationsResponse.class);
+
+                        if (getLocationsResponse == null) {
+                            view.showAlert("", "An error occurred when app was trying to fetch data. Refresh the app to fix the problem.",
+                                    "Ok", null, null);
+                            return;
+                        }
+
+                        if (getLocationsResponse.isSuccess()) {
+                            List<LocationEntity> locationEntities = getLocationsResponse.getPickedLocation();
+                            view.showLocationEntitiesOnMap(locationEntities);
+                        }
+                        else{
+                            view.showAlert("", "An error occurred when app was trying to fetch data. Refresh the app to fix the problem.",
+                                    "Ok", null, null);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                @Override
+                public void onResponseFailure(Throwable t) {
+
+                }
+            });
+
         }
 
     }

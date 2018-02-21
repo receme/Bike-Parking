@@ -3,6 +3,10 @@ package com.sunrider.bikeparking.interfaces;
 
 import android.location.Location;
 
+import com.sunrider.bikeparking.db.entities.LocationEntity;
+
+import java.util.List;
+
 public interface MainView extends BaseView {
 
     void init();
@@ -15,4 +19,6 @@ public interface MainView extends BaseView {
     void openDeviceSettingsPage();
 
     void setLocationBtnEnabled();
+
+    void showLocationEntitiesOnMap(List<LocationEntity> locationEntity);
 }

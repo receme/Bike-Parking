@@ -32,8 +32,6 @@ public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCall
     private GoogleMap googleMap;
     private Fragment fragment;
     private Callback callback;
-    private List<LocationEntity> listOfBikeUtilityLocations;
-
 
     public GoogleMapImpl(Activity activity, @NonNull Fragment fragment) {
 
@@ -44,6 +42,7 @@ public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCall
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         this.googleMap = googleMap;
 
         UiSettings settings = googleMap.getUiSettings();
@@ -136,8 +135,21 @@ public class GoogleMapImpl implements MapService<LocationEntity>, OnMapReadyCall
     @Override
     public void showLocation(Location location) {
 
+        if (googleMap == null) {
+            return;
+        }
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 
+    }
+
+    @Override
+    public void showLocationEntities(List<LocationEntity> locationEntities) {
+        if (googleMap == null) {
+            return;
+        }
+        for (LocationEntity location : locationEntities) {
+
+        }
     }
 
     @SuppressLint("MissingPermission")

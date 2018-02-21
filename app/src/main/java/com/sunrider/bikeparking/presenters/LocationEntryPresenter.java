@@ -68,6 +68,11 @@ public class LocationEntryPresenter extends BasePresenter {
                         try {
                             AddLocationResponse addLocationResponse = gson.fromJson(response.string(), AddLocationResponse.class);
 
+                            if (addLocationResponse == null) {
+                                view.showAlert("Something went wrong. Please try again later.");
+                                return;
+                            }
+
                             if (addLocationResponse.isSuccess()) {
                                 view.onLocationAddedSuccess(addLocationResponse.getLocation(), "Location is added successfully.");
                             } else {

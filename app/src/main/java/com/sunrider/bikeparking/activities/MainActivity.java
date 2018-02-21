@@ -27,6 +27,7 @@ import com.sunrider.bikeparking.db.entities.LocationEntity;
 import com.sunrider.bikeparking.fragments.HomeFragment;
 import com.sunrider.bikeparking.interfaces.MainView;
 import com.sunrider.bikeparking.presenters.MainPresenterImpl;
+import com.sunrider.bikeparking.services.apiwrapper.BikeRiderServiceImpl;
 import com.sunrider.bikeparking.services.dexter.DexterPermissionChecker;
 import com.sunrider.bikeparking.services.firebase.FirebaseAuthManager;
 import com.sunrider.bikeparking.services.firebase.FirebaseManager;
@@ -34,6 +35,8 @@ import com.sunrider.bikeparking.services.locationservice.LocationServiceImpl;
 import com.sunrider.bikeparking.utils.AppUtilMethods;
 
 import org.parceler.Parcels;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +75,8 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
                 new FirebaseManager(this),
                 DBManager.getInstance(this),
                 LocationServiceImpl.getInstance(this),
-                new DexterPermissionChecker(this));
+                new DexterPermissionChecker(this),
+                new BikeRiderServiceImpl(getString(R.string.api_base_url)));
         presenter.init();
 
 
@@ -251,6 +255,14 @@ public class MainActivity extends BaseActivity implements MainView, HomeFragment
         HomeFragment homeFragment = (HomeFragment) AppFragmentManager.getFragment(this, NavigationDrawerManager.TAG_HOME);
         if (homeFragment != null) {
             homeFragment.setLocationBtnEnabled();
+        }
+    }
+
+    @Override
+    public void showLocationEntitiesOnMap(List<LocationEntity> locationEntity) {
+        HomeFragment homeFragment = (HomeFragment) AppFragmentManager.getFragment(this, NavigationDrawerManager.TAG_HOME);
+        if (homeFragment != null) {
+            homeFragment.showLocationEntitiesOnMap(locationEntity);
         }
     }
 

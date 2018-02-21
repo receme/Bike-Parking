@@ -8,6 +8,8 @@ import com.sunrider.bikeparking.interfaces.HomeView;
 import com.sunrider.bikeparking.services.LocationService;
 import com.sunrider.bikeparking.services.MapService;
 
+import java.util.List;
+
 public class HomePresenter extends BasePresenter {
 
     private final HomeView view;
@@ -32,7 +34,13 @@ public class HomePresenter extends BasePresenter {
             mapService.showLocation(location);
             setLocationBtnEnabled(true);
         }
+    }
 
+    public void showLocationEntitiesOnMap(List<LocationEntity> locationEntities) {
+
+        if (mapService.isReady() && locationEntities != null && locationEntities.size() > 0) {
+            mapService.showLocationEntities(locationEntities);
+        }
     }
 
     public void setLocationBtnEnabled(boolean isLocationPermissionGiven) {
@@ -55,7 +63,8 @@ public class HomePresenter extends BasePresenter {
 
     public void onLocationSelectedToAdd(double latitude, double longitude) {
 
-        String address = locationService.getAddress(latitude,longitude);
+        String address = locationService.getAddress(latitude, longitude);
         view.showAddressOfSelectedLocation(address);
     }
+
 }
