@@ -6,7 +6,7 @@ import okhttp3.ResponseBody;
 public interface BikeRiderService {
 
 
-    void addUser(String userid, String name, String profileimg, String accountCreatedAt, RequestListener<ResponseBody> listener);
+    void addUser(String userid, String name, String accountCreatedAt, RequestListener<ResponseBody> listener);
 
     void getUser(String userid, RequestListener<ResponseBody> listener);
 

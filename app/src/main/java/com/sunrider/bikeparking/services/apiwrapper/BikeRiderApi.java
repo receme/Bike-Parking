@@ -13,7 +13,7 @@ public interface BikeRiderApi {
 
     @FormUrlEncoded
     @POST("/api/adduser")
-    Call<ResponseBody> addUser(@Field("userid") String userid, @Field("address") String address, @Field("profileimg") String profileimg, @Field("account_created_at") String accountCreatedAt);
+    Call<ResponseBody> addUser(@Field("userid") String userid, @Field("name") String address, @Field("account_created_at") String accountCreatedAt);
 
     @FormUrlEncoded
     @POST("/api/getUser")

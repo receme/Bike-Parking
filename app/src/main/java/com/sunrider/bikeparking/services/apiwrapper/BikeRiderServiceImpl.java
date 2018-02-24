@@ -43,8 +43,8 @@ public class BikeRiderServiceImpl implements BikeRiderService {
     }
 
     @Override
-    public void addUser(String userid, String name, String profileimg, String accountCreatedAt, RequestListener<ResponseBody> listener) {
-        Call<ResponseBody> call = api.addUser(userid, name, profileimg, accountCreatedAt);
+    public void addUser(String userid, String name,String accountCreatedAt, RequestListener<ResponseBody> listener) {
+        Call<ResponseBody> call = api.addUser(userid, name, accountCreatedAt);
         call.enqueue(new RequestCallback<>(listener));
     }
 

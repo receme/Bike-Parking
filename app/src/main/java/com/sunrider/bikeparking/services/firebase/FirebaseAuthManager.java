@@ -40,7 +40,7 @@ public class FirebaseAuthManager implements FirebaseAuth.AuthStateListener {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if (callback != null) {
-                                callback.onFirebaseLoginComplete();
+                                callback.onFirebaseLoginComplete(user);
                             }
                         } else {
                             if (callback != null) {
@@ -73,7 +73,7 @@ public class FirebaseAuthManager implements FirebaseAuth.AuthStateListener {
     }
 
     public interface Callback {
-        void onFirebaseLoginComplete();
+        void onFirebaseLoginComplete(FirebaseUser user);
 
         void onFirebaseLoginFailure();
     }

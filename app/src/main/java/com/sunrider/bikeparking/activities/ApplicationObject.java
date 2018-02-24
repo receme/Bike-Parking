@@ -4,6 +4,7 @@ package com.sunrider.bikeparking.activities;
 import android.app.Application;
 
 import com.sunrider.bikeparking.db.DBManager;
+import com.sunrider.bikeparking.utils.SharedPrefUtils;
 
 public class ApplicationObject extends Application {
 
@@ -11,7 +12,6 @@ public class ApplicationObject extends Application {
     public void onCreate() {
         super.onCreate();
 
-        //initialize database on application start
-        DBManager.getInstance(this);
+        SharedPrefUtils.initialize(this);
     }
 }

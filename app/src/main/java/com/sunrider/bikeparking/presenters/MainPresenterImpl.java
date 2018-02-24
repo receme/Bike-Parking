@@ -143,17 +143,6 @@ public class MainPresenterImpl implements MainPresenter, LocationService.Locatio
 
     }
 
-//    public void showLocationEntitiesFromDB(){
-//
-//        List<LocationEntity> locationEntities = dbService.getAllParkingLocation();
-//
-//        if(locationEntities==null){
-//            return;
-//        }
-//
-//        view.showLocationEntitiesOnMap(locationEntities);
-//    }
-
     @Override
     public void onLocationResolutionSuccess() {
 
